@@ -1,18 +1,17 @@
 const express = require("express");
-// const userRoutes = require("./routes/userRoutes");
 const userRoutes = require("./routes/userRoutes");
-// const authController = require("./../contollers/authController");
-
+const postRoutes = require("./routes/postRoutes");
+const bodyParser = require("body-parser");
 const AppError = require("./utils/appError");
-// const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cors({ credentials: true }));
-// app.use(bodyParser.json());
 express.urlencoded({ extended: false });
 // app.use((req, res, next) => {
 //   console.log("hello from middleware ");
@@ -37,7 +36,7 @@ module.exports = app.get("/OTS/getcookie", (req, res) => {
 });
 
 app.use("/MaterialShare/user", userRoutes);
-// app.use("/OTS/menu", menuRoutes);
+app.use("/MaterialShare/post", postRoutes);
 // app.use("/OTS/order", orderRoutes);
 
 app.all("*", (req, res, next) => {

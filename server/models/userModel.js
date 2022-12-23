@@ -47,8 +47,12 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["user", "expert"],
     default: "user",
+  },
+  posts: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Post",
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
@@ -57,16 +61,13 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
-
   next();
 });
 
 userSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
-
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
