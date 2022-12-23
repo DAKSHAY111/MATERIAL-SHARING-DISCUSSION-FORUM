@@ -1,8 +1,6 @@
 const express = require("express");
 // const userRoutes = require("./routes/userRoutes");
 const userRoutes = require("./routes/userRoutes");
-// const menuRoutes = require("./routes/menuRoutes");
-// const orderRoutes = require("./routes/orderRoutes");
 // const authController = require("./../contollers/authController");
 
 const AppError = require("./utils/appError");
