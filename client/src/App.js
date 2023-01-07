@@ -1,11 +1,11 @@
 import "./App.css";
 import React from "react";
-import ImageInput from "./components/imageUpload";
+import ImageUpload from "./components/ImageUpload";
 
 function App() {
   return (
     <>
-      <ImageInput />
+      <ImageUpload />
     </>
   );
 }

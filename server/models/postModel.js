@@ -12,6 +12,10 @@ const postSchema = new mongoose.Schema({
     required: [true, "A post must have a description"],
     trim: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
   photos: {
     type: String,
     trim: true,

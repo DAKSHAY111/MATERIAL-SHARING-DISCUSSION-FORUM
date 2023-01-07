@@ -18,16 +18,6 @@ app.use(bodyParser.json());
 
 app.use(cors({ credentials: true }));
 express.urlencoded({ extended: false });
-// app.use((req, res, next) => {
-//   console.log("hello from middleware ");
-//   next();
-// });
-
-// module.exports = app.get('/OTS/', (req, res) => {
-//   res.status(200).json({
-//     msg: 'successful',
-//   });
-// });
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
@@ -42,7 +32,6 @@ module.exports = app.get("/OTS/getcookie", (req, res) => {
 
 app.use("/MaterialShare/user", userRoutes);
 app.use("/MaterialShare/post", postRoutes);
-// app.use("/OTS/order", orderRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
