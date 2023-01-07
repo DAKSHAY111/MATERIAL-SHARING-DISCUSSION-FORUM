@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const express = require("express");
 const app = require("./app");
 const mongoose = require("mongoose");
+const morgan = require("morgan");
 dotenv.config({ path: "./config.env" });
 const DB = process.env.DATABASE.replace(
   "<password>",
@@ -9,6 +10,7 @@ const DB = process.env.DATABASE.replace(
 );
 const port = process.env.PORT || 3000;
 
+mongoose.set("strictQuery", false);
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
@@ -22,5 +24,5 @@ mongoose
   });
 
 app.listen(port, () => {
-  console.log(`app is running on ${port}`);
+  console.log(`Server is running on ${port}`);
 });
