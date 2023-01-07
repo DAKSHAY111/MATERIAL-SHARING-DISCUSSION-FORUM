@@ -5,8 +5,11 @@ const bodyParser = require("body-parser");
 const AppError = require("./utils/appError");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+var morgan = require("morgan");
 
 const app = express();
+
+app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
