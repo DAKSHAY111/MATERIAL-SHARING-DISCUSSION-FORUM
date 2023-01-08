@@ -1,11 +1,6 @@
 const catchAsync = require("./../utils/catchAsync");
 const User = require("./../models/userModel");
-const AppError = require("./../utils/appError");
 const sendEmail = require("./../utils/email");
-const crypto = require("crypto");
-const cookieParser = require("cookie-parser");
-
-const { promisify } = require("util");
 
 //* <------------------JWT -------------------------->
 const jwt = require("jsonwebtoken");
@@ -21,106 +16,75 @@ const createSendToken = (user, statusCode, res) => {
 
   const cookieOptions = {
     expires: new Date(Date.now() + 5 * 24 * 3600000),
-    // secure: true,
     httpOnly: true,
-    // samesite: false,
   };
 
   res.cookie("jwt", token, cookieOptions);
-
   res.status(statusCode).json({
-    status: "success",
-    token,
+    token: token,
     data: user,
   });
 };
 
-//* <------------------------- Sign In ------------------------->
+// <------------------------- Sign In ------------------------->
 
-exports.signup = catchAsync(async (req, res, next) => {
-  console.log(req.body);
-  const newUser = await User.create(req.body);
+exports.signup = catchAsync(async (req, res) => {
+  const { name, email, photo, password } = req.body;
 
+  if (!photo) photo = process.env.DEFAULT_PROFILE_PIC;
+
+  const newUser = await User.create({ name: name, email: email, photo: photo, password: password });
   createSendToken(newUser, 201, res);
-  // const token = signToken(newUser.__id);
-
-  // res.status(200).json({
-  //   message: "success",
-  //   token,
-  //   data: { use: newUser },
-  // });
 });
 
-exports.login = catchAsync(async (req, res, next) => {
+exports.login = catchAsync(async (req, res) => {
   console.log(req.body);
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    return next(new AppError("Please provide email and password", 400));
-  }
+  const user = await User.findOne({ email: email }).select("+password");
+  const isPasswordCorrect = await user.correctPassword(password, user.password);
 
-  const user = await User.findOne({ email }).select("+password");
-  // const correct = await user.correctPassword(password, user.password);
-
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    console.log(user);
-    return next(new AppError("Incorrect email or password", 401));
-  }
-
-  createSendToken(user, 200, res);
-
-  // const token = signToken(user.__id);
-
-  // res.status(200).json({
-  //   status: "success",
-  //   token,
-  // });
+  if (!user || !isPasswordCorrect) {
+    res.status(401).json("Incorrect email or password");
+  } else
+    createSendToken(user, 200, res);
 });
 
-exports.protect = catchAsync(async (req, res, next) => {
-  req.requestTime = new Date().toISOString;
+// exports.protect = catchAsync(async (req, res, next) => {
+//   let token;
+//   if (
+//     req.headers.authorization &&
+//     req.headers.authorization.startsWith("Bearer")
+//   ) {
+//     token = req.headers.authorization.split(" ")[1];
+//   }
 
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
+//   console.log(token);
+//   if (!token) {
+//     res.status(401).json("You are not logged in! Please log in to get access");
+//     return;
+//   }
 
-  console.log(token);
-  if (!token) {
-    return next(
-      new AppError("You are not logged in! Please log in to get access", 401)
-    );
-  }
+//   //* 2) verify token
 
-  //* 2) verify token
+//   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+//   //* 3) check if user is still exist
 
-  //* 3) check if user is still exist
+//   const freshUser = await User.findById(decoded.id);
 
-  const freshUser = await User.findById(decoded.id);
+//   if (!freshUser) {
+//     res.status(401).json("User not exist!");
+//     return;
+//   }
 
-  if (!freshUser) {
-    return next(
-      new AppError("The user belonging to this token is not exist", 401)
-    );
-  }
-
-  if (freshUser.passwordChangedAfter(decoded.iat)) {
-    return next(
-      new AppError("User recently changed password! Please log in again")
-    );
-  }
-  console.log(freshUser);
-  req.user = freshUser;
-  next();
-});
-
-// exports.authenticate = catchAsync(async (req, res, next) => {
-//   const token = req.cookie.jwt;
+//   if (freshUser.passwordChangedAfter(decoded.iat)) {
+//     res.status
+//     return;
+//   }
+//   console.log(freshUser);
+//   req.user = freshUser;
+//   next();
 // });
 
 //*<--------------------- Forget Password ------------------------->
@@ -128,124 +92,113 @@ exports.protect = catchAsync(async (req, res, next) => {
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    return next(new AppError("There is no user exist with this email", 404));
+    res.status(404).json("User does not exist in the system!");
+    return;
   }
 
-  const resetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSave: false });
+  const resetToken = jwt.sign({ name: user.name }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 
   console.log(user);
-  const resetURL = `${req.protocol}://${req.get(
-    "host"
-  )}/OTS/user/resetPassword/${resetToken}`;
+  const resetURL = `${req.protocol}://${req.get("host")}/user/resetPassword/${resetToken}/${user.name}`;
+  const reportURL = `${req.protocol}://${req.get("host")}/report`;
 
-  const message = `Forgot your password ? submit a PATCH request with your new password and password confirm to ${resetURL}`;
+  let message = `Forgot your password ? submit a PATCH request with your new password and password confirm to ${resetURL}`;
+  message = `<html>
+  <body>
+      Hello ${user.name},
+      <br />
+          We've got an request to reset the password for your account. Click the below Link to reset your password.
+          Please note that the link will work only for 2 hours so kindly reset before it expires.
+          <br />
+            <a href='${resetURL}'>Click Here</a>
+          <br />
+          If this wasn't you please report this activity using below link,
+          <br />
+            <a href='${reportURL}'>Click Here</a>
+          <br />
+      Regards,
+      RxChat Team
+  </html>
+  </body>`
 
   try {
     await sendEmail({
       email: user.email,
-      subject: "Your password reset token (valid for 10 min)",
-      message,
+      subject: "Reset Your password",
+      message: message,
     });
     res.status(200).json({
       status: "succes",
       message: "Token send to email !!",
     });
   } catch (err) {
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save({ validateBeforeSave: false });
-
-    return next(
-      new AppError("There was an error in sending mail, Try again", 500)
-    );
+    res.status(500).json("Internal Error while sending mail!");
+    return;
   }
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
+  const jwtToken = new URLSearchParams(req.params.token), jwtSecret = new URLSearchParams(req.params.name);
+  let jwtString = jwtToken.toString(), secretString = jwtSecret.toString();
 
-  const user = await User.findOne({
-    passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() },
+  jwtString = jwtString.substring(0, (jwtString.length - 1));
+  secretString = secretString.substring(0, (secretString.length - 1));
+
+  jwt.verify(jwtString, secretString, async (err, data) => {
+    if(err){
+      res.status(400).json("Link is expired!!");
+      return;
+    }
+    res.writeHead(301, {
+      Location: `http://localhost:3000/reset/password?user=${secretString}`
+    }).end()
   });
-
-  if (!user) {
-    return next(new AppError("Token is invalid or expired", 400));
-  }
-
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  user.passwordResetToken = undefined;
-  user.passwordResetExpires = undefined;
-
-  await user.save();
-
-  const token = signToken(user.__id);
-
-  res.status(200).json({
-    status: "success",
-    token,
-  });
-
-  next();
 });
 
 //*<--------------------- validate only for admin  ------------------------->
 
-exports.isAdmin = (req, res, next) => {
-  console.log(req.user.role);
-  if (req.user.role === "admin") {
-    next();
-  } else {
-    return next(new AppError("You are not an admin", 401));
-  }
-};
+// exports.isAdmin = (req, res, next) => {
+//   console.log(req.user.role);
+//   if (req.user.role === "admin") {
+//     next();
+//   } else {
+//     return next(new AppError("You are not an admin", 401));
+//   }
+// };
 
 //* <-----------------User --------------->
 
 exports.myProfile = catchAsync(async (req, res, next) => {
   res.status(200).json({
-    status: "success",
     data: req.user,
   });
 });
 
-const filterObj = (obj, ...allowedFields) => {
-  const newObj = {};
+// exports.updateMe = catchAsync(async (req, res, next) => {
+//   if (req.body.password || req.body.passwordConfirm) {
+//     return next(
+//       new AppError(
+//         "This route is not for update Please use /updateMyPassword",
+//         400
+//       )
+//     );
+//   }
+//   const filteredBody = filterObj(
+//     req.body,
+//     "name",
+//     "email",
+//     "contact",
+//     "address"
+//   );
+//   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+//     new: true,
+//     runValidators: true,
+//   });
 
-  Object.keys(obj).forEach((ele) => {
-    if (allowedFields.includes(ele)) newObj[ele] = obj[ele];
-  });
-  return newObj;
-};
-
-exports.updateMe = catchAsync(async (req, res, next) => {
-  if (req.body.password || req.body.passwordConfirm) {
-    return next(
-      new AppError(
-        "This route is not for update Please use /updateMyPassword",
-        400
-      )
-    );
-  }
-  const filteredBody = filterObj(
-    req.body,
-    "name",
-    "email",
-    "contact",
-    "address"
-  );
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
-    new: true,
-    runValidators: true,
-  });
-
-  res.status(201).json({
-    status: "success",
-    data: updatedUser,
-  });
-});
+//   res.status(201).json({
+//     status: "success",
+//     data: updatedUser,
+//   });
+// });

@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 
-const imageUpload = () => {
+const ImageUpload = () => {
     
   const [image, setImage] = useState(null);
 
@@ -27,4 +27,4 @@ const imageUpload = () => {
   );
 };
 
-export default imageUpload;
+export default ImageUpload;

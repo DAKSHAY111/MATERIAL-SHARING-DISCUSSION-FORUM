@@ -1,11 +1,11 @@
 import "./App.css";
 import React from "react";
-import ImageInput from "./components/imageUpload";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
-      <ImageInput />
+      <Navbar />
     </>
   );
 }
