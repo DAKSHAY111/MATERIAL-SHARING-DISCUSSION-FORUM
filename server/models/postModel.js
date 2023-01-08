@@ -12,6 +12,11 @@ const postSchema = new mongoose.Schema({
     required: [true, "A post must have a description"],
     trim: true,
   },
+  creator: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: [true, "A post must have a creator"],
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

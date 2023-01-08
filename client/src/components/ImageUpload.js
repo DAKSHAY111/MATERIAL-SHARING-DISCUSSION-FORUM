@@ -4,6 +4,7 @@ import { useState } from "react";
 const ImageUpload = () => {
   const [image, setImage] = useState(null);
 
+  const [ImgUrl, setImgUrl] = useState(null);
   const handleChange = (event) => {
     setImage(event.target.files[0]);
     console.log(
@@ -11,43 +12,39 @@ const ImageUpload = () => {
       event.target.files[0]
     );
   };
-  const handleSubmit = async (event) => {
-    //upload image to server
-    const response = await fetch(
-      "http://127.0.0.1:9000//MaterialShare/post/testImage",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        body: JSON.stringify(image),
-      }
+    const formData = new FormData();
+    formData.append("file", image);
+    formData.append("upload_preset", "materialSharingApp");
+    formData.append("cloud_name", "dr08zgkg2");
+    console.log(
+      "🚀 ~ file: imageUpload.js:21 ~ handleSubmit ~ formData",
+      formData
     );
 
-    const data = await response.json();
-    // console.log(data.data);
-
-    if (data.status === "success") {
-      console.log(data);
-      alert("Added successfully");
-    } else {
-      console.log("failed");
-    }
-
-    event.preventDefault();
-    // Here, you can submit the image to your backend or do other things with it
+    fetch("https://api.cloudinary.com/v1_1/dr08zgkg2/image/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setImgUrl(data.url);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <label>
         Select an image:
-        <input type="file" onChange={handleChange} />
+        <input type="file" onChange={handleChange} required />
       </label>
       <br />
       <button type="submit">Submit</button>
-      {image && <img src={URL.createObjectURL(image)} alt="upload-preview" />}
+      {ImgUrl && <img src={ImgUrl} alt="upload-preview" />}
     </form>
   );
 };
