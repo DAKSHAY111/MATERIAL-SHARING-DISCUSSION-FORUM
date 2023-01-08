@@ -11,5 +11,6 @@ router.route("/").get((req, res) => {
   });
 });
 
+router.route("/testImage").post(postController.testImage);
 router.route("/upload").post(postController.uploadFile);
 module.exports = router;
