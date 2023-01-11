@@ -2,7 +2,6 @@ const catchAsync = require("./../utils/catchAsync");
 const User = require("./../models/userModel");
 const sendEmail = require("./../utils/email");
 
-//* <------------------JWT -------------------------->
 const jwt = require("jsonwebtoken");
 
 const signToken = (id) => {
@@ -26,8 +25,6 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-// <------------------------- Sign In ------------------------->
-
 exports.signup = catchAsync(async (req, res) => {
   const { name, email, photo, password } = req.body;
 
@@ -49,45 +46,6 @@ exports.login = catchAsync(async (req, res) => {
   } else
     createSendToken(user, 200, res);
 });
-
-// exports.protect = catchAsync(async (req, res, next) => {
-//   let token;
-//   if (
-//     req.headers.authorization &&
-//     req.headers.authorization.startsWith("Bearer")
-//   ) {
-//     token = req.headers.authorization.split(" ")[1];
-//   }
-
-//   console.log(token);
-//   if (!token) {
-//     res.status(401).json("You are not logged in! Please log in to get access");
-//     return;
-//   }
-
-//   //* 2) verify token
-
-//   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-//   //* 3) check if user is still exist
-
-//   const freshUser = await User.findById(decoded.id);
-
-//   if (!freshUser) {
-//     res.status(401).json("User not exist!");
-//     return;
-//   }
-
-//   if (freshUser.passwordChangedAfter(decoded.iat)) {
-//     res.status
-//     return;
-//   }
-//   console.log(freshUser);
-//   req.user = freshUser;
-//   next();
-// });
-
-//*<--------------------- Forget Password ------------------------->
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
@@ -157,48 +115,8 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   });
 });
 
-//*<--------------------- validate only for admin  ------------------------->
-
-// exports.isAdmin = (req, res, next) => {
-//   console.log(req.user.role);
-//   if (req.user.role === "admin") {
-//     next();
-//   } else {
-//     return next(new AppError("You are not an admin", 401));
-//   }
-// };
-
-//* <-----------------User --------------->
-
 exports.myProfile = catchAsync(async (req, res, next) => {
   res.status(200).json({
     data: req.user,
   });
 });
-
-// exports.updateMe = catchAsync(async (req, res, next) => {
-//   if (req.body.password || req.body.passwordConfirm) {
-//     return next(
-//       new AppError(
-//         "This route is not for update Please use /updateMyPassword",
-//         400
-//       )
-//     );
-//   }
-//   const filteredBody = filterObj(
-//     req.body,
-//     "name",
-//     "email",
-//     "contact",
-//     "address"
-//   );
-//   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
-//     new: true,
-//     runValidators: true,
-//   });
-
-//   res.status(201).json({
-//     status: "success",
-//     data: updatedUser,
-//   });
-// });

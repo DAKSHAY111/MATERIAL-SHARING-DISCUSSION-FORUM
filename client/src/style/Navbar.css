@@ -1,7 +1,37 @@
 .navbar-outer{
+    position: absolute;
+    z-index: -99;
     margin: 0;
     padding: 0;
-    width: 360px;
-    height: 100vh;
-    background-color: aqua;
+    width: fit-content;
+    transform: translateY(-100%);
+    transition: all 700ms ease-in-out !important;
+}
+
+.sidebar{
+    position: relative;
+    display: flex;
+    padding: 0 .4rem;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.nav-item{
+    display: flex;
+    justify-content: center;
+    margin: .3rem .5rem !important;
+}
+
+.nav-button{
+    transform: scale(1.1);
+    background-color: #1772cd;
+    color: white !important;
+    padding: .5rem;
+    border-radius: 50%;
+    justify-content: flex-start !important;
+}
+
+.custom-tooltip{
+    font-size: xx-large !important;
 }

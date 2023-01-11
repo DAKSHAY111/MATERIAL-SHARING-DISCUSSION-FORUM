@@ -1,0 +1,68 @@
+.signup-wrapper{
+    width: 21%;
+    min-width: 360px !important;
+    padding: 2rem;
+}
+
+.flex-center-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.row-gap-2{
+    row-gap: 2rem;
+}
+
+#company-logo{
+    width: 8rem !important;
+    height: 2.7rem !important;
+}
+
+.page-title{
+    font-size: xx-large;
+}
+
+.signup-outer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+}
+
+.custom-input-field{
+    width: 20rem !important;
+}
+
+.forgot-password-outer a{
+    text-decoration: none;
+    font-size: smaller;
+    color: #1772cd;
+}
+
+.forgot-password-outer a:hover{
+    text-decoration: underline;
+}
+
+.terms-and-policy{
+    max-width: inherit;
+    margin: .7rem;
+    font-size: medium;
+}
+
+.terms-and-policy a{
+    text-decoration: none;
+    font-size: medium;
+    color: #1772cd;
+}
+
+.terms-and-policy a:hover{
+    text-decoration: underline;
+}
+
+.button-group{
+    margin: 1.3rem 0;
+    display: flex;
+    justify-content: space-between;
+}
