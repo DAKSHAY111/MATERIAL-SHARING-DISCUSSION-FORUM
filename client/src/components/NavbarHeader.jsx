@@ -58,7 +58,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function NavbarHeader() {
+const NavbarHeader = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [displayNavbar, setDisplayNavbar] = React.useState(true);
@@ -213,3 +213,5 @@ export default function NavbarHeader() {
     </>
   );
 }
+
+export default NavbarHeader
