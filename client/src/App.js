@@ -1,15 +1,12 @@
-import "./App.css";
 import React from "react";
-import Navbar from "./components/Navbar";
-// import ImageUpload from "./components/ImageUpload";
+import NavbarHeader from "./Components/NavbarHeader";
 
-function App() {
+const App = () => {
   return (
     <>
-      <Navbar />
-      {/* <ImageUpload /> */}
+      <NavbarHeader />
     </>
   );
-}
+};
 
 export default App;
