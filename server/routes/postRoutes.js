@@ -7,4 +7,9 @@ const router = express.Router();
 
 // router.route("/upload").post(postController.uploadFile);
 
+router
+  .route("/")
+  .get(postController.getAllPosts)
+  .post(authController.protect, postController.createPost);
+
 module.exports = router;

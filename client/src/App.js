@@ -9,6 +9,7 @@ import HomePage from "./Pages/HomePage";
 // import { AppContext } from "./Context/AppContext";
 
 import "./App.css";
+import CodeArea from "./Components/CodeArea";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/code" element={<CodeArea />} />
       </Routes>
     </BrowserRouter>
     // </AppContext.Provider>

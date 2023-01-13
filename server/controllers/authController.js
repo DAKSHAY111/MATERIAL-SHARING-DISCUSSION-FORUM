@@ -30,7 +30,12 @@ exports.signup = catchAsync(async (req, res) => {
 
   if (!photo) photo = process.env.DEFAULT_PROFILE_PIC;
 
-  const newUser = await User.create({ name: name, email: email, photo: photo, password: password });
+  const newUser = await User.create({
+    name: name,
+    email: email,
+    photo: photo,
+    password: password,
+  });
   createSendToken(newUser, 201, res);
 });
 
@@ -43,8 +48,7 @@ exports.login = catchAsync(async (req, res) => {
 
   if (!user || !isPasswordCorrect) {
     res.status(401).json("Incorrect email or password");
-  } else
-    createSendToken(user, 200, res);
+  } else createSendToken(user, 200, res);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -59,7 +63,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   });
 
   console.log(user);
-  const resetURL = `${req.protocol}://${req.get("host")}/user/resetPassword/${resetToken}/${user.name}`;
+  const resetURL = `${req.protocol}://${req.get(
+    "host"
+  )}/user/resetPassword/${resetToken}/${user.name}`;
   const reportURL = `${req.protocol}://${req.get("host")}/report`;
 
   let message = `Forgot your password ? submit a PATCH request with your new password and password confirm to ${resetURL}`;
@@ -79,7 +85,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       Regards,
       RxChat Team
   </html>
-  </body>`
+  </body>`;
 
   try {
     await sendEmail({
@@ -98,20 +104,24 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  const jwtToken = new URLSearchParams(req.params.token), jwtSecret = new URLSearchParams(req.params.name);
-  let jwtString = jwtToken.toString(), secretString = jwtSecret.toString();
+  const jwtToken = new URLSearchParams(req.params.token),
+    jwtSecret = new URLSearchParams(req.params.name);
+  let jwtString = jwtToken.toString(),
+    secretString = jwtSecret.toString();
 
-  jwtString = jwtString.substring(0, (jwtString.length - 1));
-  secretString = secretString.substring(0, (secretString.length - 1));
+  jwtString = jwtString.substring(0, jwtString.length - 1);
+  secretString = secretString.substring(0, secretString.length - 1);
 
   jwt.verify(jwtString, secretString, async (err, data) => {
-    if(err){
+    if (err) {
       res.status(400).json("Link is expired!!");
       return;
     }
-    res.writeHead(301, {
-      Location: `http://localhost:3000/reset/password?user=${secretString}`
-    }).end()
+    res
+      .writeHead(301, {
+        Location: `http://localhost:3000/reset/password?user=${secretString}`,
+      })
+      .end();
   });
 });
 
@@ -119,4 +129,45 @@ exports.myProfile = catchAsync(async (req, res, next) => {
   res.status(200).json({
     data: req.user,
   });
+});
+//* For Protected Routes
+
+exports.protect = catchAsync(async (req, res, next) => {
+  req.requestTime = new Date().toISOString;
+
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  console.log(token);
+  if (!token) {
+    return next(
+      new AppError("You are not logged in! Please log in to get access", 401)
+    );
+  }
+
+  //* 2) verify token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  //* 3) check if user is still exist
+  const freshUser = await User.findById(decoded.id);
+
+  if (!freshUser) {
+    return next(
+      new AppError("The user belonging to this token is not exist", 401)
+    );
+  }
+
+  if (freshUser.passwordChangedAfter(decoded.iat)) {
+    return next(
+      new AppError("User recently changed password! Please log in again")
+    );
+  }
+  console.log(freshUser);
+  req.user = freshUser;
+  next();
 });

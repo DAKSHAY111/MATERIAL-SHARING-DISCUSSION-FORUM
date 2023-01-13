@@ -19,15 +19,18 @@ const postSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "A post must have a creator"],
   },
-  
+
   createdAt: {
     type: Date,
     default: Date.now(),
   },
 
-  photos: {
-    type: String,
-    required: [true, "A photo/pdf type document is must required to create a post"],
+  media: {
+    type: Array,
+    // required: [
+    //   false,
+    //   "A photo/pdf type document is must required to create a post",
+    // ],
     trim: true,
   },
 
@@ -45,7 +48,6 @@ const postSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
-
 });
 
 const Post = mongoose.model("Post", postSchema);
