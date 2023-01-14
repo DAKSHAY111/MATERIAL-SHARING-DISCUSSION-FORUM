@@ -1,8 +1,15 @@
-const catchAsync = require("./../utils/catchAsync");
-const User = require("./../models/userModel");
-const sendEmail = require("./../utils/email");
+const catchAsync = require("../utils/catchAsync");
+const User = require("../models/userModel");
+const UnverifiedUser = require("../models/UnverifiedUser");
 
+const sendEmail = require("../utils/email");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
+const hashPassword = async (pass) => {
+  pass = await bcrypt.hash(pass, 10);
+  return pass;
+}
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -26,12 +33,91 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res) => {
-  const { name, email, photo, password } = req.body;
+  const { name, email, password } = req.body;
 
-  if (!photo) photo = process.env.DEFAULT_PROFILE_PIC;
+  try {
+    let verifiedUser = await User.findOne({ name: name });
+    if(verifiedUser){
+      res.status(409).json("User already exist with provided username!!");
+      return;
+    }
 
-  const newUser = await User.create({ name: name, email: email, photo: photo, password: password });
-  createSendToken(newUser, 201, res);
+    verifiedUser = await User.findOne({ email: email });
+    if(verifiedUser){
+      res.status(409).json("User already exist with provided Email!!");
+    }
+
+    let findUser = await UnverifiedUser.findOne({ name: name });
+    if(findUser){
+      jwt.verify(findUser.token, name, async (err, data) => {
+        if(err){
+          await UnverifiedUser.findOneAndDelete({ name: name });
+        }else{
+          res.status(409).json("User already exist with provided username!!");
+          return;
+        }
+      });
+    }
+
+    findUser = await UnverifiedUser.findOne({ email: email });
+    if(findUser){
+      jwt.verify(findUser.token, name, async (err, data) => {
+        console.log(err, data);
+        if(err){
+          await UnverifiedUser.findOneAndDelete({ email: email });
+        }else{
+          res.status(409).json("A verification mail has already been sent!!");
+          return;
+        }
+      });
+    }
+    const hashedPassword = await hashPassword(password);
+    const token = createSendToken(name);
+    await UnverifiedUser.create({ name: name, email: email, password: hashedPassword, token: token });
+
+    const verificationURL = `http://localhost:3000/verify?user=${name}&token=${token}`;
+    const reportURL = `http://localhost:3000/report`;
+
+    const message = `
+    <html>
+    <body>
+        Hello user,
+        <br />
+            Thankyou for joining with us. Click the below Link to verify your account.
+            Please note that the link will work only for 2 hours so kindly verify before it expires.
+            <br />
+              <a href='${verificationURL}'>Click Here</a>
+            <br />
+            If this wasn't you please report this activity using below link,
+            <br />
+              <a href='${reportURL}'>Click Here</a>
+            <br />
+        Regards,
+        CodePro Team
+    </html>
+    </body>
+    `;
+
+    try {
+      await sendEmail({
+        email: email,
+        subject: "Verify your account",
+        message: message,
+      });
+      res.status(201).json("Verification mail sent successfully!");
+    } catch (err) {
+      res.status(500).json("Internal Error while sending mail!");
+      return;
+    }
+
+  } catch (err) {
+    if (err.code == 11000) {
+      res.status(409).json("User already exists!");
+    } else {
+      console.log(err);
+      res.status(500).json("Internal server error! Please try again!!");
+    }
+  }
 });
 
 exports.login = catchAsync(async (req, res) => {

@@ -1,23 +1,81 @@
 import React, { useState } from "react";
-import { Button, Checkbox, TextField } from "@mui/material";
+import { Button, Checkbox, TextField, Backdrop, CircularProgress } from "@mui/material";
+import { Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
+import { useSignUpUserMutation } from "../Services/AppApi";
+
 import google from "../static/google.png";
 
 import "../Style/Signup.css";
-import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [inputName, setInputName] = useState("");
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
+  const [disableSubmit, setDisableSubmit] = useState(false);
+  const [response, setResponse] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const navigate = useNavigate();
 
-  const handleSignup = () => {
-    
-  }
+  const [signUpFunction] = useSignUpUserMutation();
 
+  const handleSignup = () => {
+    if(inputName.length === 0 || inputEmail.length === 0){
+      setResponse(true); setIsError(true);
+      setAlertMessage("Field can not be empty!");
+      return;
+    }else if(inputPassword.length < 8){
+      setResponse(true); setIsError(true);
+      setAlertMessage("Password must be length 8");
+      return;
+    }
+    setDisableSubmit(true);
+    
+    signUpFunction({
+      name: inputName,
+      email: inputEmail,
+      password: inputPassword,
+    }).then(({ data, error }) => {
+      setResponse(true);
+      if (data) {
+        setIsError(false);
+        setAlertMessage(data);
+      } else {
+        setIsError(true);
+        setAlertMessage(error.data);
+      }
+      setDisableSubmit(false);
+    });
+    
+    setInputEmail("");
+    setInputPassword("");
+  };
+  
   return (
     <div className="signup-outer">
+      <Backdrop
+        className="backdrop-dialog"
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={response}
+        onClick={() => {
+          setDisableSubmit(false);
+          setResponse(false); setAlertMessage('');
+        }}
+      >
+        <Alert
+          className="response-dialog"
+          style={{
+            display: response ? "flex" : "none",
+            color: isError ? "red" : "green",
+          }}
+          severity={isError ? "error" : "success"}
+        >
+          {alertMessage}
+        </Alert>
+      </Backdrop>
       <div className="signup-wrapper">
         <div className="flex-center-wrapper row-gap-2">
           <div className="company-title">
@@ -36,6 +94,7 @@ const Signup = () => {
                 margin="dense"
                 id="input-name"
                 required
+                focused
               />
             </div>
             <div className="input-item">
@@ -73,9 +132,22 @@ const Signup = () => {
             </div>
 
             <div className="button-group">
-              <Button onClick={() => navigate('/login')} variant="text">Sign in</Button>
-              <Button onClick={handleSignup} variant="contained" disableElevation>
-                Create Account
+              <Button onClick={() => navigate("/login")} variant="text">
+                Sign in
+              </Button>
+              <Button
+                onClick={handleSignup}
+                variant="contained"
+                disableElevation
+                disabled={disableSubmit}
+              >
+                {
+                  disableSubmit ? (
+                    <CircularProgress style={{ width: "20px", height: "20px" }} />
+                  ) : (
+                    "Create Account"
+                  )
+                }
               </Button>
             </div>
           </div>

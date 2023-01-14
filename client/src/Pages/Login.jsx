@@ -34,6 +34,7 @@ const Login = () => {
                 label="Email"
                 margin="dense"
                 autoComplete="off"
+                focused
               />
             </div>
             <div className="input-item">
