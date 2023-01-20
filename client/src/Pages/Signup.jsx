@@ -23,17 +23,17 @@ const Signup = () => {
   const [signUpFunction] = useSignUpUserMutation();
 
   const handleSignup = () => {
-    if(inputName.length === 0 || inputEmail.length === 0){
+    if (inputName.length === 0 || inputEmail.length === 0) {
       setResponse(true); setIsError(true);
       setAlertMessage("Field can not be empty!");
       return;
-    }else if(inputPassword.length < 8){
+    } else if (inputPassword.length < 8) {
       setResponse(true); setIsError(true);
       setAlertMessage("Password must be length 8");
       return;
     }
     setDisableSubmit(true);
-    
+
     signUpFunction({
       name: inputName,
       email: inputEmail,
@@ -49,11 +49,11 @@ const Signup = () => {
       }
       setDisableSubmit(false);
     });
-    
+
     setInputEmail("");
     setInputPassword("");
   };
-  
+
   return (
     <div className="signup-outer">
       <Backdrop
