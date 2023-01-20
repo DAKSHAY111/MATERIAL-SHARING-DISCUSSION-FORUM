@@ -4,7 +4,6 @@ import { CopyBlock, dracula } from "react-code-blocks"
 
 const CodeArea = () => {
 
-
     const [language, changeLanguage] = useState("jsx");
     // const [languageDemo, changeDemo] = useState("");
     const languageDemo = `class HelloMessage extends React.Component {
