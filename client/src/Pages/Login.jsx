@@ -7,11 +7,11 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLoginUserMutation } from "../Services/appApi";
+import { useLoginUserMutation } from "../services/appApi";
 
 import google from "../static/google.png";
 
-import "../Style/Signup.css";
+import "../style/Signup.css";
 
 const Login = () => {
   const [loginInputIndex, setLoginInputIndex] = useState("");

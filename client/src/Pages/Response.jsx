@@ -2,7 +2,7 @@ import { Alert, CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import "../Style/Signup.css";
+import "../style/Signup.css";
 
 const Response = () => {
   const [searchParams] = useSearchParams();
