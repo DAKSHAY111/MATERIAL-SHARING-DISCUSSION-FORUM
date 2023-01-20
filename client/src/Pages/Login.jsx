@@ -7,11 +7,11 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLoginUserMutation } from "../Services/appApi";
+import { useLoginUserMutation } from "../services/appApi";
 
 import google from "../static/google.png";
 
-import "../Style/Signup.css";
+import "../style/Signup.css";
 
 const Login = () => {
   const [loginInputIndex, setLoginInputIndex] = useState("");
@@ -90,6 +90,7 @@ const Login = () => {
                 label="Username/Email"
                 margin="dense"
                 autoComplete="off"
+                autoFocus={true}
               />
             </div>
             <div className="input-item">
@@ -107,7 +108,7 @@ const Login = () => {
             </div>
 
             <div className="forgot-password-outer">
-              <a href="/forgot/password">Forgot password?</a>
+              <a href="/forgot?index=password">Forgot password?</a>
             </div>
 
             <div className="button-group">

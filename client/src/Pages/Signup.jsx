@@ -3,11 +3,11 @@ import { Button, Checkbox, TextField, Backdrop, CircularProgress } from "@mui/ma
 import { Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import { useSignUpUserMutation } from "../Services/appApi";
+import { useSignUpUserMutation } from "../services/appApi";
 
 import google from "../static/google.png";
 
-import "../Style/Signup.css";
+import "../style/Signup.css";
 
 const Signup = () => {
   const [inputName, setInputName] = useState("");
@@ -94,6 +94,7 @@ const Signup = () => {
                 margin="dense"
                 id="input-name"
                 required
+                autoFocus={true}
               />
             </div>
             <div className="input-item">

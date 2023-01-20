@@ -51,6 +51,7 @@ const DB = process.env.DATABASE.replace(
   "<password>",
   process.env.DATABASE_PASSWORD
 );
+
 const port = process.env.PORT;
 
 cloudinary.config({
@@ -59,7 +60,7 @@ cloudinary.config({
   api_secret: process.env.CLOUD_SECRET_KEY,
 });
 
-// mongoose.set("strictQuery", false);
+mongoose.set("strictQuery", false);
 mongoose
   .connect(DB, {
     useNewUrlParser: true,

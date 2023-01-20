@@ -13,9 +13,9 @@ import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import { LinkContainer } from "react-router-bootstrap";
 import { Nav } from "react-bootstrap";
 
-import "../Style/Navbar.css";
+import "../style/Navbar.css";
 
-import { useLogoutMutation } from "../Services/appApi";
+import { useLogoutMutation } from "../services/appApi";
 import { useSelector } from "react-redux";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (

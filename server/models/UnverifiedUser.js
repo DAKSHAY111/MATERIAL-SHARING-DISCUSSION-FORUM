@@ -22,6 +22,6 @@ const UnverifiedUserSchema = mongoose.Schema({
         required: true,
     }
 });
-
 const UnverifiedUser = mongoose.model("UnverifiedUser", UnverifiedUserSchema);
+
 module.exports = UnverifiedUser;

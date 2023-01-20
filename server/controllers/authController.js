@@ -37,22 +37,22 @@ exports.signup = catchAsync(async (req, res) => {
 
   try {
     let verifiedUser = await User.findOne({ name: name });
-    if(verifiedUser){
+    if (verifiedUser) {
       res.status(409).json("User already exist with provided username!!");
       return;
     }
 
     verifiedUser = await User.findOne({ email: email });
-    if(verifiedUser){
+    if (verifiedUser) {
       res.status(409).json("User already exist with provided Email!!");
     }
 
     let findUser = await UnverifiedUser.findOne({ name: name });
-    if(findUser){
+    if (findUser) {
       jwt.verify(findUser.token, name, async (err, data) => {
-        if(err){
+        if (err) {
           await UnverifiedUser.findOneAndDelete({ name: name });
-        }else{
+        } else {
           res.status(409).json("User already exist with provided username!!");
           return;
         }
@@ -60,12 +60,12 @@ exports.signup = catchAsync(async (req, res) => {
     }
 
     findUser = await UnverifiedUser.findOne({ email: email });
-    if(findUser){
+    if (findUser) {
       jwt.verify(findUser.token, name, async (err, data) => {
         console.log(err, data);
-        if(err){
+        if (err) {
           await UnverifiedUser.findOneAndDelete({ email: email });
-        }else{
+        } else {
           res.status(409).json("A verification mail has already been sent!!");
           return;
         }
@@ -120,16 +120,59 @@ exports.signup = catchAsync(async (req, res) => {
   }
 });
 
-exports.login = catchAsync(async (req, res) => {
-  console.log(req.body);
-  const { email, password } = req.body;
+exports.verifyAccount = catchAsync(async (req, res) => {
+  const token = req.params.token;
+  try {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
+      let response = {};
+      if (err) {
+        response.isError = true;
+        response.message = "Verification link is expired!!";
+        response.status = 403;
+      } else {
+        const user = await UnverifiedUser.findOne({ name: data.id });
+        if (!user) {
+          res.redirect(`http://localhost:3000/response?status=100`);
+          return;
+        }
+        await UnverifiedUser.findOneAndDelete({ name: data.id });
+        await User.create({ name: user.name, email: user.email, password: user.password });
 
-  const user = await User.findOne({ email: email }).select("+password");
+        response.isError = false;
+        response.message = "Your Account is Verified Successfully :)";
+        response.status = 201;
+      }
+      res.redirect(`http://localhost:3000/response?status=${response.status}`);
+    });
+  } catch (err) {
+    res.redirect(`http://localhost:3000/response?status=503`);
+  }
+});
+
+exports.login = catchAsync(async (req, res) => {
+  const { index, password } = req.body;
+
+  let user = await User.findOne({ email: index });
+  if (!user) {
+    user = await User.findOne({ name: index });
+  }
+  if (!user) {
+    res.status(404).json("User does not exists!!");
+    return;
+  }
+
   const isPasswordCorrect = await user.correctPassword(password, user.password);
 
-  if (!user || !isPasswordCorrect) {
-    res.status(401).json("Incorrect email or password");
-  } else createSendToken(user, 200, res);
+  if (!isPasswordCorrect) {
+    res.status(401).json("Incorrect password!!");
+  } else {
+    createSendToken(user, 200, res);
+    return;
+  }
+});
+
+exports.logout = catchAsync(async (req, res) => {
+  return res.status(201).json(null);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -143,11 +186,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-  console.log(user);
-  const resetURL = `${req.protocol}://${req.get(
-    "host"
-  )}/user/resetPassword/${resetToken}/${user.name}`;
-  const reportURL = `${req.protocol}://${req.get("host")}/report`;
+  const resetURL = `http://localhost:3000/new/password?id=${resetToken}/`;
+  const reportURL = `http://localhost:3000/report`;
 
   let message = `Forgot your password ? submit a PATCH request with your new password and password confirm to ${resetURL}`;
   message = `<html>
@@ -174,10 +214,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       subject: "Reset Your password",
       message: message,
     });
-    res.status(200).json({
-      status: "succes",
-      message: "Token send to email !!",
-    });
+    res.status(200).json("E-mail sent successfully!!");
   } catch (err) {
     res.status(500).json("Internal Error while sending mail!");
     return;
@@ -185,25 +222,26 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  const jwtToken = new URLSearchParams(req.params.token),
-    jwtSecret = new URLSearchParams(req.params.name);
-  let jwtString = jwtToken.toString(),
-    secretString = jwtSecret.toString();
+  try {
+    const jwtToken = new URLSearchParams(req.params.token);
+    let jwtString = jwtToken.toString();
 
-  jwtString = jwtString.substring(0, jwtString.length - 1);
-  secretString = secretString.substring(0, secretString.length - 1);
+    jwtString = jwtString.substring(0, jwtString.length - 1);
+    secretString = secretString.substring(0, secretString.length - 1);
 
-  jwt.verify(jwtString, secretString, async (err, data) => {
-    if (err) {
-      res.status(400).json("Link is expired!!");
-      return;
-    }
-    res
-      .writeHead(301, {
-        Location: `http://localhost:3000/reset/password?user=${secretString}`,
-      })
-      .end();
-  });
+    jwt.verify(jwtString, secretString, async (err, data) => {
+      let response = "Password changed successfully!";
+      if (err) {
+        response = "Link is expired!!";
+        res.redirect(`http://localhost:3000/response?response=${response}&navigate=${false}&error=${true}`);
+        return;
+      }
+      response = "Password changed successfully!";
+      res.redirect(`http://localhost:3000/response?response=${response}&navigate=${true}&error=${false}`);
+    });
+  }catch(err){
+    res.status(503).json("Internal server error!!");
+  }
 });
 
 exports.myProfile = catchAsync(async (req, res, next) => {

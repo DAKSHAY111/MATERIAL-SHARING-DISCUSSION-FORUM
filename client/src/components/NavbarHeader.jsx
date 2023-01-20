@@ -16,7 +16,7 @@ import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import $ from "jquery";
 
 import Navbar from "./Navbar";
-import "../Style/Navbar.css";
+import "../style/Navbar.css";
 import { useSelector } from "react-redux";
 
 const Search = styled("div")(({ theme }) => ({

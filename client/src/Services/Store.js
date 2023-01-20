@@ -16,7 +16,6 @@ const persistConfiguration = {
     storage,
     blackList: [appApi.reducerPath],
 }
-
 const myPersistReducer = persistReducer(persistConfiguration, customReducer);
 
 const store = configureStore({

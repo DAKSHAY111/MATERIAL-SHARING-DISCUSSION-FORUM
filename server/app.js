@@ -30,11 +30,10 @@ module.exports = app.get("/OTS/getcookie", (req, res) => {
   });
 });
 
-app.use("/MaterialShare/user", userRoutes);
-app.use("/MaterialShare/post", postRoutes);
+app.use("/user", userRoutes);
+app.use("/post", postRoutes);
 
 app.all("*", (req, res, next) => {
-  console.log('here');
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 

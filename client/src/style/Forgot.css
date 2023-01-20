@@ -1,0 +1,28 @@
+.email-outer{
+    display: flex;
+    width: 520px !important;
+    border: 1px solid black;
+    border-radius: .5rem;
+    padding: 4rem;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.email-wrapper{
+    display: flex;
+    flex-direction: column;
+    width: inherit !important;
+    row-gap: 1.5rem;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+#input-reset-email{
+    width: 500px !important;
+}
+
+.info-paragraph{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: medium;
+    width: inherit !important;
+}
