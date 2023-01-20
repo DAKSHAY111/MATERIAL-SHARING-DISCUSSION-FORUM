@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import AppApi from "./appApi";
+import AppApi from "./AppApi";
 
 export const userSlice = createSlice({
     name: 'user',

@@ -3,7 +3,7 @@ import { Button, Checkbox, TextField, Backdrop, CircularProgress } from "@mui/ma
 import { Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import { useSignUpUserMutation } from "../services/appApi";
+import { useSignUpUserMutation } from "../services/AppApi";
 
 import google from "../static/google.png";
 
