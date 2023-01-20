@@ -211,7 +211,6 @@ exports.myProfile = catchAsync(async (req, res, next) => {
     data: req.user,
   });
 });
-//* For Protected Routes
 
 exports.protect = catchAsync(async (req, res, next) => {
   req.requestTime = new Date().toISOString;

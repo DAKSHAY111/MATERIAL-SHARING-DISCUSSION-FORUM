@@ -3,7 +3,7 @@ import { Button, Checkbox, TextField, Backdrop, CircularProgress } from "@mui/ma
 import { Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import { useSignUpUserMutation } from "../Services/AppApi";
+import { useSignUpUserMutation } from "../Services/appApi";
 
 import google from "../static/google.png";
 
@@ -94,7 +94,6 @@ const Signup = () => {
                 margin="dense"
                 id="input-name"
                 required
-                focused
               />
             </div>
             <div className="input-item">

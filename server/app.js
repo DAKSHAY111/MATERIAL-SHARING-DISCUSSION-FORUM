@@ -34,6 +34,7 @@ app.use("/MaterialShare/user", userRoutes);
 app.use("/MaterialShare/post", postRoutes);
 
 app.all("*", (req, res, next) => {
+  console.log('here');
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 

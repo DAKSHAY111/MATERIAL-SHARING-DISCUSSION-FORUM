@@ -12,11 +12,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
+import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import $ from "jquery";
 
 import Navbar from "./Navbar";
 import "../Style/Navbar.css";
+import { useSelector } from "react-redux";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -58,7 +59,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const NavbarHeader = () => {
+export default function NavbarHeader() {
+  const user = useSelector((state) => state.user);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [displayNavbar, setDisplayNavbar] = React.useState(true);
@@ -86,9 +89,11 @@ const NavbarHeader = () => {
   const handleNavclick = () => {
     setDisplayNavbar((prev) => !prev);
     if (displayNavbar) {
-      $(".navbar-outer").css("transform", "translateY(0%)").css('zIndex', '2');
+      $(".navbar-outer").css("transform", "translateX(0%)").css("zIndex", "2");
     } else {
-      $(".navbar-outer").css("transform", "translateY(-100%)").css('zIndex', '-99');
+      $(".navbar-outer")
+        .css("transform", "translateX(-100%)")
+        .css("zIndex", "-99");
     }
   };
 
@@ -179,19 +184,23 @@ const NavbarHeader = () => {
               />
             </Search>
             <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-            </Box>
+
+            {user && (
+              <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </Box>
+            )}
+
             <Box sx={{ display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
@@ -213,5 +222,3 @@ const NavbarHeader = () => {
     </>
   );
 }
-
-export default NavbarHeader

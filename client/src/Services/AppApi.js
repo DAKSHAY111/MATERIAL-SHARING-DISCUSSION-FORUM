@@ -1,30 +1,40 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-import NavbarHeader from "./Components/NavbarHeader";
-import Signup from "./Components/Signup";
-import Login from "./Components/Login";
-import HomePage from "./Pages/HomePage";
-import Verify from "./Pages/Verify";
+const appApi = createApi({
+    reducerPath: "appApi",
+    baseQuery: fetchBaseQuery({
+        baseUrl: "http://localhost:5000/",
+    }),
+    endpoints: (builder) => ({
 
-import { AppContext } from "./Context/AppContext";
+        signUpUser: builder.mutation({
+            query: (user) => ({
+                url: "/user/signup",
+                method: "POST",
+                body: user,
+            }),
+        }),
 
-import "./App.css";
+        loginUser: builder.mutation({
+            query: (data) => ({
+                url: "/user/login",
+                method: "POST",
+                body: data,
+            }),
+        }),
 
-function App() {
-  return (
-    <AppContext.Provider value={{}}>
-      <BrowserRouter>
-        <NavbarHeader />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/verify" element={<Verify />} />
-        </Routes>
-      </BrowserRouter>
-    </AppContext.Provider>
-  );
-}
+        logout: builder.mutation({
+            query: (data) => ({
+                url: "/user/logout",
+                method: "POST",
+                body: data,
+            }),
+        }),
 
-export default App;
+    })
+});
+
+export const { useSignUpUserMutation,
+                useLoginUserMutation,
+                useLogoutMutation } = appApi;
+export default appApi;

@@ -4,8 +4,9 @@
     margin: 0;
     padding: 0;
     width: fit-content;
-    transform: translateY(-100%);
-    transition: all 700ms ease-in-out !important;
+    transform: translateX(-100%);
+    transition: all 600ms ease-in-out !important;
+    height: calc(100% - 65px);
 }
 
 .sidebar{
@@ -15,21 +16,26 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    width: 240px;
+    height: 100%;
+    background-color: #1772cf;
 }
 
 .nav-item{
     display: flex;
     justify-content: center;
-    margin: .3rem .5rem !important;
+    margin: .5rem .5rem !important;
+    width: 100% !important;
 }
 
 .nav-button{
     transform: scale(1.1);
-    background-color: #1772cd;
+    /* background-color: #1772cd; */
     color: white !important;
     padding: .5rem;
     border-radius: 50%;
-    justify-content: flex-start !important;
+    justify-content: center !important;
+    width: 200px !important;
 }
 
 .custom-tooltip{

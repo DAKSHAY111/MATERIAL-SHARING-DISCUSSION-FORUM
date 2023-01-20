@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton } from "@mui/material";
+import { Button } from "@mui/material";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 
@@ -15,6 +15,9 @@ import { Nav } from "react-bootstrap";
 
 import "../Style/Navbar.css";
 
+import { useLogoutMutation } from "../Services/appApi";
+import { useSelector } from "react-redux";
+
 const BootstrapTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -29,86 +32,114 @@ const BootstrapTooltip = styled(({ className, ...props }) => (
 }));
 
 const Navbar = () => {
+  const [logoutFunction] = useLogoutMutation();
+  const user = useSelector((state) => state.user);
+
   return (
     <div className="navbar-outer">
       <div className="sidebar">
         <div className="nav-item" id="nav-item">
-          <LinkContainer to="/">
+          <LinkContainer style={{ textDecoration: "none" }} to="/">
             <Nav.Link>
               <BootstrapTooltip title="Home" placement="right" arrow>
-                <IconButton>
+                {/* <IconButton>
                   <HomeRoundedIcon className="nav-button" color="primary" />
-                </IconButton>
+                </IconButton> */}
+                <Button className="nav-button" variant="text" startIcon={<HomeRoundedIcon />}>
+                  Home
+                </Button>
               </BootstrapTooltip>
             </Nav.Link>
           </LinkContainer>
         </div>
 
-        <div className="nav-item" id="nav-item">
-          <LinkContainer to="/create/file">
-            <Nav.Link>
-              <BootstrapTooltip title="Create File" placement="right" arrow>
-                <IconButton>
-                  <AddRoundedIcon className="nav-button" color="primary" />
-                </IconButton>
-              </BootstrapTooltip>
-            </Nav.Link>
-          </LinkContainer>
-        </div>
+        {user && (
+          <div className="nav-item" id="nav-item">
+            <LinkContainer style={{ textDecoration: "none" }} to="/create/file">
+              <Nav.Link>
+                <BootstrapTooltip title="Create File" placement="right" arrow>
+                  {/* <IconButton>
+                    <AddRoundedIcon className="nav-button" color="primary" />
+                  </IconButton> */}
+                  <Button className="nav-button" variant="text" startIcon={<AddRoundedIcon />}>
+                    Create File
+                  </Button>
+                </BootstrapTooltip>
+              </Nav.Link>
+            </LinkContainer>
+          </div>
+        )}
 
-        <div className="nav-item" id="nav-item">
-          <LinkContainer to="/discuss">
-            <Nav.Link>
-              <BootstrapTooltip title="Discuss Panel" placement="right" arrow>
-                <IconButton>
-                  <NearMeRoundedIcon className="nav-button" color="primary" />
-                </IconButton>
-              </BootstrapTooltip>
-            </Nav.Link>
-          </LinkContainer>
-        </div>
+        {user && (
+          <div className="nav-item" id="nav-item">
+            <LinkContainer style={{ textDecoration: "none" }} to="/discuss">
+              <Nav.Link>
+                <BootstrapTooltip title="Discuss Panel" placement="right" arrow>
+                  {/* <IconButton>
+                    <NearMeRoundedIcon className="nav-button" color="primary" />
+                  </IconButton> */}
+                  <Button className="nav-button" variant="text" startIcon={<NearMeRoundedIcon />}>
+                    Discuss
+                  </Button>
+                </BootstrapTooltip>
+              </Nav.Link>
+            </LinkContainer>
+          </div>
+        )}
 
-        <div className="nav-item" id="nav-item">
-          <LinkContainer to="/login">
-            <Nav.Link>
-              <BootstrapTooltip title="Login" placement="right" arrow>
-                <IconButton>
-                  <LoginRoundedIcon className="nav-button" color="primary" />
-                </IconButton>
-              </BootstrapTooltip>
-            </Nav.Link>
-          </LinkContainer>
-        </div>
+        {!user && (
+          <div className="nav-item" id="nav-item">
+            <LinkContainer style={{ textDecoration: "none" }} to="/login">
+              <Nav.Link>
+                <BootstrapTooltip title="Login" placement="right" arrow>
+                  {/* <IconButton>
+                    <LoginRoundedIcon className="nav-button" color="primary" />
+                  </IconButton> */}
+                  <Button className="nav-button" variant="text" startIcon={<LoginRoundedIcon />}>
+                    Login
+                  </Button>
+                </BootstrapTooltip>
+              </Nav.Link>
+            </LinkContainer>
+          </div>
+        )}
 
-        <div className="nav-item" id="nav-item">
-          <LinkContainer to="/signup">
-            <Nav.Link>
-              <BootstrapTooltip title="Signup" placement="right" arrow>
-                <IconButton>
-                  <PersonAddRoundedIcon
+        {!user && (
+          <div className="nav-item" id="nav-item">
+            <LinkContainer style={{ textDecoration: "none" }} to="/signup">
+              <Nav.Link>
+                <BootstrapTooltip title="Signup" placement="right" arrow>
+                  {/* <IconButton>
+                    <PersonAddRoundedIcon
+                      className="nav-button"
+                      color="primary"
+                    />
+                  </IconButton> */}
+                  <Button
                     className="nav-button"
-                    color="primary"
-                  />
-                </IconButton>
-              </BootstrapTooltip>
-            </Nav.Link>
-          </LinkContainer>
-        </div>
+                    variant="text"
+                    startIcon={<PersonAddRoundedIcon />}
+                  >
+                    Signup
+                  </Button>
+                </BootstrapTooltip>
+              </Nav.Link>
+            </LinkContainer>
+          </div>
+        )}
 
-        <div className="nav-item" id="nav-item">
-          <LinkContainer to="/logout">
-            <Nav.Link>
-              <BootstrapTooltip title="Logout" placement="right" arrow>
-                <IconButton>
-                  <ExitToAppRoundedIcon
-                    className="nav-button"
-                    color="primary"
-                  />
-                </IconButton>
-              </BootstrapTooltip>
-            </Nav.Link>
-          </LinkContainer>
-        </div>
+        {user && (
+          <div className="nav-item" id="nav-item">
+            <BootstrapTooltip title="Logout" placement="right" arrow>
+              {/* <IconButton>
+                <ExitToAppRoundedIcon className="nav-button" color="primary" />
+              </IconButton> */}
+              <Button onClick={logoutFunction} className="nav-button" variant="text" startIcon={<ExitToAppRoundedIcon />}>
+                Logout
+              </Button>
+            </BootstrapTooltip>
+          </div>
+        )}
       </div>
     </div>
   );
