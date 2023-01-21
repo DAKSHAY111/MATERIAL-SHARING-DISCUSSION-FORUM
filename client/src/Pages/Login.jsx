@@ -24,7 +24,9 @@ const Login = () => {
   const [loginFunction] = useLoginUserMutation();
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
+
     if (loginInputIndex === "" || loginInputPassword === "") {
       setIsError(true);
       setAlertMessage("Fields can not be empty!");

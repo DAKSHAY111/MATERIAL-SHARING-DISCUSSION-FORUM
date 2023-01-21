@@ -38,11 +38,20 @@ const appApi = createApi({
             }),
         }),
 
+        resetPassword: builder.mutation({
+            query: (data) => ({
+                url: "/user/reset/password",
+                method: "POST",
+                body: data,
+            }),
+        }),
+
     })
 });
 
 export const { useSignUpUserMutation,
     useLoginUserMutation,
     useLogoutMutation,
-    useRequestNewPasswordMutation } = appApi;
+    useRequestNewPasswordMutation,
+    useResetPasswordMutation } = appApi;
 export default appApi;

@@ -5,8 +5,6 @@ const authController = require("./../controllers/authController");
 
 const router = express.Router();
 
-// router.route("/upload").post(postController.uploadFile);
-
 router
   .route("/")
   .post(authController.protect, postController.createPost);
