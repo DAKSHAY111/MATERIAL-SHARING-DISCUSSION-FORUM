@@ -62,7 +62,6 @@ exports.signup = catchAsync(async (req, res) => {
     findUser = await UnverifiedUser.findOne({ email: email });
     if (findUser) {
       jwt.verify(findUser.token, name, async (err, data) => {
-        console.log(err, data);
         if (err) {
           await UnverifiedUser.findOneAndDelete({ email: email });
         } else {
@@ -114,7 +113,6 @@ exports.signup = catchAsync(async (req, res) => {
     if (err.code == 11000) {
       res.status(409).json("User already exists!");
     } else {
-      console.log(err);
       res.status(500).json("Internal server error! Please try again!!");
     }
   }
@@ -222,24 +220,25 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
+  const { token, newPassword } = req.body;
+
   try {
-    const jwtToken = new URLSearchParams(req.params.token);
-    let jwtString = jwtToken.toString();
+    let jwtToken = token.toString();
+    jwtToken = jwtToken.substr(0, (jwtToken.length - 1));
 
-    jwtString = jwtString.substring(0, jwtString.length - 1);
-    secretString = secretString.substring(0, secretString.length - 1);
-
-    jwt.verify(jwtString, secretString, async (err, data) => {
+    jwt.verify(jwtToken, process.env.JWT_SECRET, async (err, data) => {
       let response = "Password changed successfully!";
       if (err) {
         response = "Link is expired!!";
-        res.redirect(`http://localhost:3000/response?response=${response}&navigate=${false}&error=${true}`);
-        return;
+        res.status(503).json(`${response}`);
+      } else {
+        const hashedNewPass = await hashPassword(newPassword);
+        await User.findOneAndUpdate({ name: data.name }, { password: hashedNewPass });
+        response = "Password changed successfully!";
+        res.status(200).json(`${response}`);
       }
-      response = "Password changed successfully!";
-      res.redirect(`http://localhost:3000/response?response=${response}&navigate=${true}&error=${false}`);
     });
-  }catch(err){
+  } catch (err) {
     res.status(503).json("Internal server error!!");
   }
 });
@@ -261,7 +260,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
 
-  console.log(token);
   if (!token) {
     return next(
       new AppError("You are not logged in! Please log in to get access", 401)
@@ -285,7 +283,6 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError("User recently changed password! Please log in again")
     );
   }
-  console.log(freshUser);
   req.user = freshUser;
   next();
 });

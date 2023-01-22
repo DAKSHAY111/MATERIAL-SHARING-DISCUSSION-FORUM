@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Response from "./pages/Response";
 import HomePage from "./pages/HomePage";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 import { AppContext } from "./context/AppContext";
 
@@ -31,6 +32,7 @@ function App() {
           {user && <Route path="/login" element={<HomePage />} />}
 
           <Route path="/forgot" element={<ForgotPassword />} />
+          <Route path="/new/password" element={<ResetPassword />} />
 
           <Route path="/response" element={<Response />} />
         </Routes>

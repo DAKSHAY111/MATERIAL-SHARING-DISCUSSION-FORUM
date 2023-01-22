@@ -19,7 +19,9 @@ const Signup = () => {
 
   const [signUpFunction] = useSignUpUserMutation();
 
-  const handleSignup = () => {
+  const handleSignup = (e) => {
+    e.preventDefault();
+
     if (inputName.length === 0 || inputEmail.length === 0) {
       setResponse(true); setIsError(true);
       setAlertMessage("Field can not be empty!");
