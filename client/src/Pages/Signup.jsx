@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { Button, Checkbox, TextField, Backdrop, CircularProgress } from "@mui/material";
 import { Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
 import { useSignUpUserMutation } from "../services/AppApi";
-
 import google from "../static/google.png";
-
 import "../style/Signup.css";
 
 const Signup = () => {
@@ -39,6 +36,7 @@ const Signup = () => {
       email: inputEmail,
       password: inputPassword,
     }).then(({ data, error }) => {
+      console.log(error);
       setResponse(true);
       if (data) {
         setIsError(false);
