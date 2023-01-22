@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Checkbox, TextField, Backdrop, CircularProgress } from "@mui/material";
 import { Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useSignUpUserMutation } from "../services/AppApi";
+import { useSignUpUserMutation } from "../services/appApi";
 import google from "../static/google.png";
 import "../style/Signup.css";
 

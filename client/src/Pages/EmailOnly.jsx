@@ -31,7 +31,7 @@ const EmailOnly = () => {
           setAlertMessage(error.data);
           setResponse(true);
           setDisableSubmit(false);
-        }else{
+        } else {
           setIsError(false);
           setAlertMessage(data);
           setResponse(true);

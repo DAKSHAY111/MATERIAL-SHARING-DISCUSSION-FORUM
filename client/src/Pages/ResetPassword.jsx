@@ -29,13 +29,13 @@ const ResetPassword = () => {
   const handleResetPassword = (e) => {
     e.preventDefault();
     setDisableSubmit(true);
-    if(password === "" ||
-    confirmPassword === ""){
-        setIsError(true);
-        setAlertMessage("Field can not be empty!!");
-        setResponse(true);
-        setDisableSubmit(false);
-        return;
+    if (password === "" ||
+      confirmPassword === "") {
+      setIsError(true);
+      setAlertMessage("Field can not be empty!!");
+      setResponse(true);
+      setDisableSubmit(false);
+      return;
     }
     else if (
       password.length < 8 ||
@@ -142,11 +142,11 @@ const ResetPassword = () => {
               </Button>
               <Button disabled={disableSubmit} onClick={handleResetPassword}>
                 {
-                    disableSubmit ? (
-                        <CircularProgress style={{ width: "20px", height: "20px" }} />
-                    ) : (
-                        "Reset Password"
-                    )
+                  disableSubmit ? (
+                    <CircularProgress style={{ width: "20px", height: "20px" }} />
+                  ) : (
+                    "Reset Password"
+                  )
                 }
               </Button>
             </div>

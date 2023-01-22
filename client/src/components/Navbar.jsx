@@ -15,7 +15,7 @@ import { Nav } from "react-bootstrap";
 
 import "../style/Navbar.css";
 
-import { useLogoutMutation } from "../services/AppApi";
+import { useLogoutMutation } from "../services/appApi";
 import { useSelector } from "react-redux";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
