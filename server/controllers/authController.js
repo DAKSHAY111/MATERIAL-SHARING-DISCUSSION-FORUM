@@ -9,7 +9,7 @@ const bcrypt = require("bcryptjs");
 const hashPassword = async (pass) => {
   pass = await bcrypt.hash(pass, 10);
   return pass;
-}
+};
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -34,7 +34,6 @@ const createSendToken = (user, statusCode, res) => {
 
 exports.signup = catchAsync(async (req, res) => {
   const { name, email, password } = req.body;
-
   try {
     let verifiedUser = await User.findOne({ name: name });
     if (verifiedUser) {
@@ -105,11 +104,12 @@ exports.signup = catchAsync(async (req, res) => {
       });
       res.status(201).json("Verification mail sent successfully!");
     } catch (err) {
+      console.log(err);
       res.status(500).json("Internal Error while sending mail!");
       return;
     }
-
   } catch (err) {
+    console.log(err);
     if (err.code == 11000) {
       res.status(409).json("User already exists!");
     } else {
@@ -134,7 +134,11 @@ exports.verifyAccount = catchAsync(async (req, res) => {
           return;
         }
         await UnverifiedUser.findOneAndDelete({ name: data.id });
-        await User.create({ name: user.name, email: user.email, password: user.password });
+        await User.create({
+          name: user.name,
+          email: user.email,
+          password: user.password,
+        });
 
         response.isError = false;
         response.message = "Your Account is Verified Successfully :)";
@@ -214,6 +218,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     });
     res.status(200).json("E-mail sent successfully!!");
   } catch (err) {
+    console.log(err);
     res.status(500).json("Internal Error while sending mail!");
     return;
   }
@@ -224,7 +229,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   try {
     let jwtToken = token.toString();
-    jwtToken = jwtToken.substr(0, (jwtToken.length - 1));
+    jwtToken = jwtToken.substr(0, jwtToken.length - 1);
 
     jwt.verify(jwtToken, process.env.JWT_SECRET, async (err, data) => {
       let response = "Password changed successfully!";
@@ -233,7 +238,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
         res.status(503).json(`${response}`);
       } else {
         const hashedNewPass = await hashPassword(newPassword);
-        await User.findOneAndUpdate({ name: data.name }, { password: hashedNewPass });
+        await User.findOneAndUpdate(
+          { name: data.name },
+          { password: hashedNewPass }
+        );
         response = "Password changed successfully!";
         res.status(200).json(`${response}`);
       }
