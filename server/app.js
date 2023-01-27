@@ -30,12 +30,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
-module.exports = app.get("/OTS/getcookie", (req, res) => {
-  res.cookie(`Cookie token name`, `encrypted cookie string Value`);
-  res.status(200).json({
-    msg: "cookie set",
-  });
-});
+module.exports = app;
 
 app.use("/user", userRoutes);
 app.use("/post", postRoutes);

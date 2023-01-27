@@ -82,26 +82,35 @@ const CreatePost = () => {
             maxRows={2}
           />
         </div>
+        <div className="tags-title">Selected Tags</div>
         <div className="tags-collection">
-            {
-                selectedTags?.map((tag) => (
-                    <p onClick={() => {
-                        setTags((state) => [...state, tag]);
-                        setSelectedTags((state) => state?.filter((all) => all !== tag));
-                    }} key={tag} className="selected-tag-representation">{tag}</p>
-                ))
-            }
+          {selectedTags?.map((tag) => (
+            <p
+              onClick={() => {
+                setTags((state) => [...state, tag]);
+                setSelectedTags((state) => state?.filter((all) => all !== tag));
+              }}
+              key={tag}
+              className="selected-tag-representation"
+            >
+              {tag}
+            </p>
+          ))}
         </div>
+        <div className="tags-title">Select Tags from Below</div>
         <div className="tags-collection">
-            <div className="tags-title">
-                Select Tags from Below
-            </div>
-            { tags?.map((tag) => (
-                <p onClick={() => {
-                    setSelectedTags((state) => [...state, tag]);
-                    setTags((state) => state?.filter((all) => all !== tag));
-                }} key={tag} className="tag-representation">{tag}</p>
-            ))}
+          {tags?.map((tag) => (
+            <p
+              onClick={() => {
+                setSelectedTags((state) => [...state, tag]);
+                setTags((state) => state?.filter((all) => all !== tag));
+              }}
+              key={tag}
+              className="tag-representation"
+            >
+              {tag}
+            </p>
+          ))}
         </div>
       </div>
     </div>

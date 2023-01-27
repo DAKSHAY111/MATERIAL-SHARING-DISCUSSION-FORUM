@@ -5,9 +5,14 @@
     align-items: center;
 }
 
+.tags-title{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: larger;
+    color: rgb(118, 118, 118);
+}
+
 .tags-collection{
     display: flex;
-    flex-direction: column;
     justify-content: space-evenly;
     width: 480px;
     flex-wrap: wrap;
@@ -21,6 +26,8 @@
     border-radius: 1rem;
     margin: .2rem;
     transition: 100ms;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1rem;
 }
 
 .selected-tag-representation{
