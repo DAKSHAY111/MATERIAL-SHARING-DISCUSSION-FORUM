@@ -1,6 +1,4 @@
 const catchAsync = require("./../utils/catchAsync");
-const User = require("./../models/userModel");
-const cloudinary = require("cloudinary");
 
 exports.createPost = catchAsync(async (req, res) => {
   const { title, content, tags, description, user, media } = req.body;

@@ -1,8 +1,6 @@
 const dotenv = require("dotenv");
-const express = require("express");
 const app = require("./app");
 const mongoose = require("mongoose");
-const morgan = require("morgan");
 const cloudinary = require("cloudinary").v2;
 
 dotenv.config({ path: "./config.env" });
@@ -19,7 +17,7 @@ cloudinary.config({
   api_secret: process.env.CLOUD_SECRET_KEY,
 });
 
-mongoose.set("strictQuery", false);
+// mongoose.set("strictQuery", false);
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
