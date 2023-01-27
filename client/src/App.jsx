@@ -8,6 +8,7 @@ import Response from "./pages/Response";
 import HomePage from "./pages/HomePage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import CreatePost from "./components/CreatePost";
 
 import { AppContext } from "./context/AppContext";
 
@@ -30,6 +31,9 @@ function App() {
 
           {!user && <Route path="/login" element={<Login />} />}
           {user && <Route path="/login" element={<HomePage />} />}
+
+          {!user && <Route path="/create/file" element={<Login />} />}
+          {user && <Route path="/create/file" element={<CreatePost />} />}
 
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/new/password" element={<ResetPassword />} />
