@@ -1,0 +1,36 @@
+.create-post-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.tags-collection{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 480px;
+    flex-wrap: wrap;
+    margin: 1rem;
+}
+
+.tag-representation, .selected-tag-representation{
+    display: flex;
+    padding: .3rem .7rem;
+    text-align: center;
+    border-radius: 1rem;
+    margin: .2rem;
+    transition: 100ms;
+}
+
+.selected-tag-representation{
+    cursor: pointer;
+    background-color: #1772cd;
+    color: white;
+}
+
+.tag-representation:hover{
+    cursor: pointer;
+    background-color: #1772cd;
+    color: white;
+}

@@ -7,6 +7,13 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 var morgan = require("morgan");
 
+const tags = [
+  'C++', 'Java', 'Python', 'Depth-First-Search', 'Breadth-First-Search',
+  'Linked-List', 'Two-Pointer', 'Dynamic Programming', 'Hashmap', 'Array',
+  'String', 'Tree', 'Graph', 'Bit-Manipulation', 'Sorting', 'Trie', 'Math',
+  'Backtracking', 'Divide and Conquer', 'Stack', 'Queue'
+];
+
 const app = express();
 
 app.use(morgan("dev"));
@@ -32,6 +39,10 @@ module.exports = app.get("/OTS/getcookie", (req, res) => {
 
 app.use("/user", userRoutes);
 app.use("/post", postRoutes);
+
+app.get("/tags", async (req, res) => {
+  res.status(200).json(tags);
+});
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));

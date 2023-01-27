@@ -45,6 +45,14 @@ const appApi = createApi({
         body: data,
       }),
     }),
+
+    fetchTags: builder.mutation({
+      query: () => ({
+        url: "/tags",
+        method: "GET",
+      }),
+    }),
+
   }),
 });
 
@@ -54,5 +62,6 @@ export const {
   useLogoutMutation,
   useRequestNewPasswordMutation,
   useResetPasswordMutation,
+  useFetchTagsMutation,
 } = appApi;
 export default appApi;

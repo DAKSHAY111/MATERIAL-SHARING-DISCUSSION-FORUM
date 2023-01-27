@@ -19,3 +19,15 @@ code {
   align-items: center;
   min-height: 90vh;
 }
+
+.flex-row-2{
+  display: flex;
+  flex-direction: column;
+  row-gap: 2rem;
+}
+
+.flex-column-2{
+  display: flex;
+  flex-direction: row;
+  column-gap: 2rem;
+}

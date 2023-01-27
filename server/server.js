@@ -17,7 +17,7 @@ cloudinary.config({
   api_secret: process.env.CLOUD_SECRET_KEY,
 });
 
-// mongoose.set("strictQuery", false);
+mongoose.set("strictQuery", false);
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
