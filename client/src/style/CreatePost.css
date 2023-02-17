@@ -4,6 +4,7 @@
     justify-content: center;
     align-items: center;
     height: 90vh;
+    min-width: 480px;
 }
 
 .create-post-wrapper{
@@ -128,4 +129,25 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+}
+
+.close-preview-icon{
+    display: flex;
+    position: absolute;
+    top: 2%;
+    right: 9%;
+    cursor: pointer;
+}
+
+@media screen and (max-width:840px) {
+    .create-post-outer{
+        margin: 2rem 0 0 0;
+    }
+    .create-post-wrapper{
+        flex-direction: column;
+        margin: 8rem 2rem 2rem 2rem;
+    }
+    .left-section{
+        margin: 2rem;
+    }
 }

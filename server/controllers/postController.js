@@ -1,8 +1,9 @@
 const catchAsync = require("./../utils/catchAsync");
+const Post = require("../models/postModel");
+const User = require("../models/userModel");
 
 exports.createPost = catchAsync(async (req, res) => {
-  const { title, tags, description, user, media } = req.body;
-
+  const { title, description, tags, media, user } = req.body;
   const newPost = await Post.create({
     title: title,
     description: description,

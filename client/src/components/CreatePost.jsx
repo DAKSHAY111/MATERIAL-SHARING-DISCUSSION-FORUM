@@ -1,8 +1,11 @@
-import { Alert, Backdrop, Button, TextField, Tooltip } from "@mui/material";
+import { Alert, Backdrop, Button, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useFetchTagsMutation } from "../services/appApi";
-import { Document, Page } from "react-pdf";
+import { useSelector } from "react-redux";
+import {
+  useFetchTagsMutation,
+  useCreatePostMutation,
+} from "../services/appApi";
 
 import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
@@ -15,6 +18,8 @@ import "../style/Signup.css";
 import "../style/CreatePost.css";
 
 const CreatePost = () => {
+  const user = useSelector((state) => state.user);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
@@ -27,18 +32,64 @@ const CreatePost = () => {
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [fetchTagsFunction] = useFetchTagsMutation();
+  const [createPostFunc] = useCreatePostMutation();
 
   useEffect(() => {
     fetchTagsFunction().then(async ({ data, error }) => {
       if (error) {
         setIsError(true);
-        setAlertMessage(error.data);
+        setAlertMessage(error);
         setResponse(true);
       } else {
         setTags(data);
       }
     });
-  }, []);
+  }, [fetchTagsFunction]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setDisableSubmit(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "post_uploader_preset");
+
+    try {
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dhdhpzhtq/image/upload",
+        {
+          method: "post",
+          body: formData,
+        }
+      );
+      let urlData = response.json();
+      urlData = urlData?.url;
+      createPostFunc({ title, tags, description, media: urlData, user, headers: {
+        authorization: "Bearer " + localStorage.getItem("token"),
+      } }).then(
+        ({ data, error }) => {
+          console.log(data);
+          console.log(error);
+          setResponse(true);
+          if (error) {
+            setAlertMessage(error.data.message);
+            setIsError(true);
+          } else {
+            setTags([]);
+            setTitle("");
+            setDescription("");
+            setFile(null);
+            setDisableSubmit(true);
+            setAlertMessage("Post created successfully!");
+            setIsError(false);
+          }
+        }
+      );
+    } catch (ex) {
+      setAlertMessage("Error Occurred while posting");
+      setIsError(true);
+    }
+  };
 
   const handlePostUpload = (e) => {
     e.preventDefault();
@@ -60,13 +111,26 @@ const CreatePost = () => {
         open={openPreview}
         onClick={() => setOpenPreview(false)}
       >
-        {
-          file !== null ? (
-            <Document file={URL.createObjectURL(file)} type={"application/pdf"}>
-              <Page />
-            </Document>
-          ) : ""
-        }
+        {file !== null ? (
+          <>
+            <BootstrapTooltip title="Close Preview" position="bottom">
+              <CloseRoundedIcon
+                onClick={() => setOpenPreview(false)}
+                className="close-preview-icon"
+              />
+            </BootstrapTooltip>
+            <object
+              aria-labelledby="Previewing Document..."
+              onClick={() => setOpenPreview(false)}
+              width={"100%"}
+              height="100%"
+              data={URL.createObjectURL(file)}
+              type={file?.type}
+            />
+          </>
+        ) : (
+          ""
+        )}
       </Backdrop>
       <Backdrop
         className="backdrop-dialog"
@@ -90,7 +154,7 @@ const CreatePost = () => {
         </Alert>
       </Backdrop>
       <div className="create-post-wrapper">
-        <div className="flex-row-2">
+        <div className="flex-row-2 left-section">
           <TextField
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -113,6 +177,7 @@ const CreatePost = () => {
             margin="dense"
             id="input-description"
             multiline
+            required
             maxRows={2}
           />
           <div className="file-input-outer">
@@ -124,7 +189,12 @@ const CreatePost = () => {
                   <ImageRoundedIcon className="file-assistant-icon" />
                 )}
                 <BootstrapTooltip title="View file" placement="top">
-                  <div onClick={() => setOpenPreview(true)} className="file-name">{file.name}</div>
+                  <div
+                    onClick={() => setOpenPreview(true)}
+                    className="file-name"
+                  >
+                    {file.name}
+                  </div>
                 </BootstrapTooltip>
                 <BootstrapTooltip title="Remove File" placement="top">
                   <CloseRoundedIcon
@@ -162,6 +232,7 @@ const CreatePost = () => {
               <Button
                 className="create-post-button"
                 disabled={disableSubmit}
+                onClick={handleSubmit}
                 variant="contained"
                 color="info"
               >
@@ -173,16 +244,15 @@ const CreatePost = () => {
         <div className="tags-outer">
           <div className="tags-heading">
             <div className="tags-title">Select Tags from Below</div>
-            {selectedTags.length > 0 ? (
-              <BootstrapTooltip placement="right" title="Clear Tags">
-                <CloseRoundedIcon
-                  onClick={() => setSelectedTags([])}
-                  className="clear-icon-tags"
-                />
-              </BootstrapTooltip>
-            ) : (
-              ""
-            )}
+            <BootstrapTooltip placement="right" title="Clear Tags">
+              <CloseRoundedIcon
+                style={{
+                  visibility: selectedTags.length > 0 ? "visible" : "hidden",
+                }}
+                onClick={() => setSelectedTags([])}
+                className="clear-icon-tags"
+              />
+            </BootstrapTooltip>
           </div>
           <div className="tags-collection">
             {tags?.map((tag) => (

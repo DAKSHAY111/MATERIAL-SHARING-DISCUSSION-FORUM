@@ -53,6 +53,14 @@ const appApi = createApi({
       }),
     }),
 
+    createPost: builder.mutation({
+      query: (data) => ({
+        url: "/post/create",
+        method: "post",
+        body: data,
+      }),
+    }),
+
   }),
 });
 
@@ -63,5 +71,6 @@ export const {
   useRequestNewPasswordMutation,
   useResetPasswordMutation,
   useFetchTagsMutation,
+  useCreatePostMutation
 } = appApi;
 export default appApi;

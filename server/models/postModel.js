@@ -27,10 +27,6 @@ const postSchema = new mongoose.Schema({
 
   media: {
     type: Array,
-    // required: [
-    //   false,
-    //   "A photo/pdf type document is must required to create a post",
-    // ],
     trim: true,
   },
 

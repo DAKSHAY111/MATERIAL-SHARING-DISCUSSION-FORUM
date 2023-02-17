@@ -1,7 +1,7 @@
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/userModel");
 const UnverifiedUser = require("../models/UnverifiedUser");
-
+const AppError = require("../utils/appError");
 const sendEmail = require("../utils/email");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -25,10 +25,16 @@ const createSendToken = (user, statusCode, res) => {
     httpOnly: true,
   };
 
+  const newUserData = new Object({
+    name: user.name,
+    photo: user.photo,
+    role: user.role,
+  });
+
   res.cookie("jwt", token, cookieOptions);
   res.status(statusCode).json({
     token: token,
-    data: user,
+    data: newUserData,
   });
 };
 
@@ -258,24 +264,22 @@ exports.myProfile = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  req.requestTime = new Date().toISOString;
-
+  const { headers } = req.body;
   let token;
   if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
+    headers.authorization &&
+    headers.authorization.startsWith("Bearer")
   ) {
-    token = req.headers.authorization.split(" ")[1];
+    token = headers.authorization.split(" ")[1];
   }
-
   if (!token) {
     return next(
-      new AppError("You are not logged in! Please log in to get access", 401)
+      new AppError("You are not logged in!! Please log in to get access", 401)
     );
   }
 
   //* 2) verify token
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
   //* 3) check if user is still exist
   const freshUser = await User.findById(decoded.id);
@@ -285,12 +289,6 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError("The user belonging to this token is not exist", 401)
     );
   }
-
-  if (freshUser.passwordChangedAfter(decoded.iat)) {
-    return next(
-      new AppError("User recently changed password! Please log in again")
-    );
-  }
-  req.user = freshUser;
+  req.body.user = freshUser;
   next();
 });
