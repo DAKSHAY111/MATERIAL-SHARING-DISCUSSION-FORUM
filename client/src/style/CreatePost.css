@@ -1,14 +1,54 @@
-.create-post-wrapper{
+.create-post-outer{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 90vh;
+}
+
+.create-post-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    column-gap: 3rem;
+}
+
+.tags-outer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem;
+}
+
+.tags-heading{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.clear-icon-tags{
+    color: rgb(118, 118, 118);
+    place-self: center;
+    margin: .5rem;
+    cursor: pointer;
+    padding: .3rem;
+    border-radius: 50%;
+    transition: 300ms;
+}
+
+.clear-icon-tags:hover{
+    transition: 300ms;
+    background: #e0dfdf;
 }
 
 .tags-title{
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     font-size: larger;
     color: rgb(118, 118, 118);
+    margin: .5rem;
 }
 
 .tags-collection{
@@ -16,18 +56,19 @@
     justify-content: space-evenly;
     width: 480px;
     flex-wrap: wrap;
-    margin: 1rem;
+    margin: .7rem;
 }
 
 .tag-representation, .selected-tag-representation{
     display: flex;
-    padding: .3rem .7rem;
+    padding: .4rem .9rem;
     text-align: center;
     border-radius: 1rem;
     margin: .2rem;
     transition: 100ms;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 1rem;
+    transition: 300ms;
 }
 
 .selected-tag-representation{
@@ -38,6 +79,53 @@
 
 .tag-representation:hover{
     cursor: pointer;
-    background-color: #1772cd;
+    color: #1772cd;
+}
+
+.selected-tag-representation:hover{
     color: white;
+}
+
+.input-label{
+    color: #1772cd;
+    cursor: pointer;
+    padding: .7rem;
+    border-radius: .3rem;
+    transition: 300ms;
+    font-weight: 500;
+    font-size: medium;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.input-label:hover{
+    background: #e1eef9;
+}
+
+.uploaded-document-details{
+    display: flex;
+    flex-direction: row;
+    margin: 1.3rem 0;
+    cursor: pointer;
+}
+
+.file-assistant-icon{
+    margin: 0 .4rem;
+    cursor: pointer !important;
+}
+
+.file-name{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: medium;
+    font-weight: 400;
+    margin: 0;
+}
+
+.create-post-button{
+    display: flex;
+}
+
+.button-flex-row-even{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
 }

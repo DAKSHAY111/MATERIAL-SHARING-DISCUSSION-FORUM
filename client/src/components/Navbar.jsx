@@ -18,7 +18,7 @@ import "../style/Navbar.css";
 import { useLogoutMutation } from "../services/appApi";
 import { useSelector } from "react-redux";
 
-const BootstrapTooltip = styled(({ className, ...props }) => (
+export const BootstrapTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.arrow}`]: {

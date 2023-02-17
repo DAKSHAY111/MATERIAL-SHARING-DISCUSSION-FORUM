@@ -73,7 +73,7 @@ exports.signup = catchAsync(async (req, res) => {
     const token = signToken(name);
     await UnverifiedUser.create({ name: name, email: email, password: hashedPassword, token: token });
 
-    const verificationURL = `http://localhost:3000/verify?user=${name}&token=${token}`;
+    const verificationURL = `http://localhost:5000/verify?user=${name}&token=${token}`;
     const reportURL = `http://localhost:3000/report`;
 
     const message = `
