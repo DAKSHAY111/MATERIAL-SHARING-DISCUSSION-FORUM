@@ -42,9 +42,6 @@ const Navbar = () => {
           <LinkContainer style={{ textDecoration: "none" }} to="/">
             <Nav.Link>
               <BootstrapTooltip title="Home" placement="right" arrow>
-                {/* <IconButton>
-                  <HomeRoundedIcon className="nav-button" color="primary" />
-                </IconButton> */}
                 <Button className="nav-button" variant="text" startIcon={<HomeRoundedIcon />}>
                   Home
                 </Button>
@@ -58,9 +55,6 @@ const Navbar = () => {
             <LinkContainer style={{ textDecoration: "none" }} to="/create/file">
               <Nav.Link>
                 <BootstrapTooltip title="Create File" placement="right" arrow>
-                  {/* <IconButton>
-                    <AddRoundedIcon className="nav-button" color="primary" />
-                  </IconButton> */}
                   <Button className="nav-button" variant="text" startIcon={<AddRoundedIcon />}>
                     Create File
                   </Button>
@@ -75,9 +69,6 @@ const Navbar = () => {
             <LinkContainer style={{ textDecoration: "none" }} to="/discuss">
               <Nav.Link>
                 <BootstrapTooltip title="Discuss Panel" placement="right" arrow>
-                  {/* <IconButton>
-                    <NearMeRoundedIcon className="nav-button" color="primary" />
-                  </IconButton> */}
                   <Button className="nav-button" variant="text" startIcon={<NearMeRoundedIcon />}>
                     Discuss
                   </Button>
@@ -92,9 +83,6 @@ const Navbar = () => {
             <LinkContainer style={{ textDecoration: "none" }} to="/login">
               <Nav.Link>
                 <BootstrapTooltip title="Login" placement="right" arrow>
-                  {/* <IconButton>
-                    <LoginRoundedIcon className="nav-button" color="primary" />
-                  </IconButton> */}
                   <Button className="nav-button" variant="text" startIcon={<LoginRoundedIcon />}>
                     Login
                   </Button>
@@ -109,12 +97,6 @@ const Navbar = () => {
             <LinkContainer style={{ textDecoration: "none" }} to="/signup">
               <Nav.Link>
                 <BootstrapTooltip title="Signup" placement="right" arrow>
-                  {/* <IconButton>
-                    <PersonAddRoundedIcon
-                      className="nav-button"
-                      color="primary"
-                    />
-                  </IconButton> */}
                   <Button
                     className="nav-button"
                     variant="text"
@@ -131,9 +113,6 @@ const Navbar = () => {
         {user && (
           <div className="nav-item" id="nav-item">
             <BootstrapTooltip title="Logout" placement="right" arrow>
-              {/* <IconButton>
-                <ExitToAppRoundedIcon className="nav-button" color="primary" />
-              </IconButton> */}
               <Button onClick={logoutFunction} className="nav-button" variant="text" startIcon={<ExitToAppRoundedIcon />}>
                 Logout
               </Button>

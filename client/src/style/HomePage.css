@@ -1,0 +1,112 @@
+.home-page-outer{
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.search-outer{
+    margin: 2rem;
+}
+
+.search-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    place-content: space-around;
+    width: 100%;
+}
+
+.search-by-name{
+    margin-left: 3rem;
+}
+
+.search-div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.search-by-tags-outer{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-by-tags-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 80%;
+}
+
+.post-outer{
+    margin: 2rem;
+}
+
+.post-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-outer{
+    display: flex;
+    flex-direction: column;
+    margin: 2rem 1rem;
+    width: fit-content;
+    row-gap: 1rem;
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+    font-size: medium !important;
+}
+
+.post-previewing-icon{
+    display: flex;
+    min-width: 360px !important;
+    min-height: 120px !important;
+    cursor: pointer;
+    transition: 600ms ease !important;
+}
+
+.post-previewing-icon:hover{
+    color: #0a6ed2 !important;
+    transition: 600ms ease !important;
+}
+
+.post-description{
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+    font-size: medium !important;
+    margin: .3rem .5rem !important;
+}
+
+.post-header{
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+    font-size: medium !important;
+}
+
+.home-post-tags{
+    margin: .2rem .3rem;
+}
+
+.no-posts-found{
+    font-size: xx-large;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+@media screen and (max-width:720px) {
+    .search-wrapper{
+        flex-direction: column;
+        row-gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .search-by-tags-wrapper{
+        width: 100%;
+    }
+}

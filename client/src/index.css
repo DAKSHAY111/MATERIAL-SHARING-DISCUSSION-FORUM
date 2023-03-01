@@ -31,3 +31,7 @@ code {
   flex-direction: row;
   column-gap: 2rem;
 }
+
+::-webkit-scrollbar{
+  display: none;
+}

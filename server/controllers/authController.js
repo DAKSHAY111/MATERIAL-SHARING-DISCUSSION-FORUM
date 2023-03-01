@@ -11,14 +11,14 @@ const hashPassword = async (pass) => {
   return pass;
 };
 
-const signToken = (id) => {
+const signToken = (id, expiryTime) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    expiresIn: expiryTime === undefined ? process.env.JWT_EXPIRES_IN : expiryTime,
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
+const createSendToken = (user, statusCode, res, expiryTime) => {
+  const token = signToken(user._id, expiryTime);
 
   const cookieOptions = {
     expires: new Date(Date.now() + 5 * 24 * 3600000),
@@ -174,7 +174,7 @@ exports.login = catchAsync(async (req, res) => {
   if (!isPasswordCorrect) {
     res.status(401).json("Incorrect password!!");
   } else {
-    createSendToken(user, 200, res);
+    createSendToken(user, 200, res, '9999 years');
     return;
   }
 });
@@ -278,17 +278,25 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  //* 2) verify token
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    //* 2) verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  //* 3) check if user is still exist
-  const freshUser = await User.findById(decoded.id);
+    //* 3) check if user is still exist
+    const freshUser = await User.findById(decoded.id);
 
-  if (!freshUser) {
-    return next(
-      new AppError("The user belonging to this token is not exist", 401)
-    );
+    if (!freshUser) {
+      return next(
+        new AppError("The user belonging to this token is not exist", 401)
+      );
+    }
+    req.body.user = freshUser;
+    next();
+  }catch(err){
+    if(err.message === "jwt expired"){
+      return next(
+        new AppError("Your session is expired!! Please log in again", 401)
+      );
+    }
   }
-  req.body.user = freshUser;
-  next();
 });

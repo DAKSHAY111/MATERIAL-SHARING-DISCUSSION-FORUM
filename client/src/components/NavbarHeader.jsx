@@ -172,9 +172,9 @@ export default function NavbarHeader() {
               component="div"
               sx={{ display: { xs: "none", sm: "block" } }}
             >
-              CodePro
+              CodeStudy
             </Typography>
-            <Search>
+            {/* <Search>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -182,7 +182,7 @@ export default function NavbarHeader() {
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
               />
-            </Search>
+            </Search> */}
             <Box sx={{ flexGrow: 1 }} />
 
             {user && (

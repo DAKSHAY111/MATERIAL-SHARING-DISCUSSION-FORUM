@@ -139,6 +139,12 @@
     cursor: pointer;
 }
 
+.submitted-outer{
+    display: flex;
+    flex-direction: row;
+    column-gap: 1rem;
+}
+
 @media screen and (max-width:840px) {
     .create-post-outer{
         margin: 2rem 0 0 0;

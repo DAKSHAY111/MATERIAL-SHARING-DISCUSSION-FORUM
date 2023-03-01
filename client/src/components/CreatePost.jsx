@@ -1,4 +1,10 @@
-import { Alert, Backdrop, Button, TextField } from "@mui/material";
+import {
+  Alert,
+  Backdrop,
+  Button,
+  CircularProgress,
+  TextField,
+} from "@mui/material";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -6,6 +12,8 @@ import {
   useFetchTagsMutation,
   useCreatePostMutation,
 } from "../services/appApi";
+
+import { useNavigate } from "react-router-dom";
 
 import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
@@ -20,6 +28,8 @@ import "../style/CreatePost.css";
 const CreatePost = () => {
   const user = useSelector((state) => state.user);
 
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
@@ -29,6 +39,7 @@ const CreatePost = () => {
   const [isError, setIsError] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [disableSubmit, setDisableSubmit] = useState(true);
+  const [submitted, setSubmitted] = useState(false);
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [fetchTagsFunction] = useFetchTagsMutation();
@@ -49,6 +60,16 @@ const CreatePost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setDisableSubmit(true);
+    setSubmitted(true);
+
+    if (title === "" || description === "") {
+      setIsError(true);
+      setAlertMessage("Fields can not be empty!!");
+      setResponse(true);
+      setDisableSubmit(false);
+      setSubmitted(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", file);
@@ -62,45 +83,55 @@ const CreatePost = () => {
           body: formData,
         }
       );
-      let urlData = response.json();
+      let urlData = await response.json();
       urlData = urlData?.url;
-      createPostFunc({ title, tags, description, media: urlData, user, headers: {
-        authorization: "Bearer " + localStorage.getItem("token"),
-      } }).then(
-        ({ data, error }) => {
-          console.log(data);
-          console.log(error);
-          setResponse(true);
-          if (error) {
-            setAlertMessage(error.data.message);
-            setIsError(true);
-          } else {
-            setTags([]);
-            setTitle("");
-            setDescription("");
-            setFile(null);
-            setDisableSubmit(true);
-            setAlertMessage("Post created successfully!");
-            setIsError(false);
-          }
+      createPostFunc({
+        title,
+        tags: selectedTags,
+        description,
+        media: urlData,
+        user,
+        headers: {
+          authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }).then(({ data, error }) => {
+        setResponse(true);
+        if (error) {
+          setAlertMessage(error.data.message);
+          setIsError(true);
+          setSubmitted(false);
+        } else {
+          setSelectedTags([]);
+          setTitle("");
+          setDescription("");
+          setFile(null);
+          setDisableSubmit(true);
+          setAlertMessage("Post created successfully! Please wait you will be automatically redirected to home page...");
+          setIsError(false);
+          setSubmitted(false);
+
+          setTimeout(() => {
+            navigate('/');
+          }, 1500);
         }
-      );
+      });
     } catch (ex) {
       setAlertMessage("Error Occurred while posting");
       setIsError(true);
+      setSubmitted(false);
     }
   };
 
   const handlePostUpload = (e) => {
-    e.preventDefault();
     if (e.target.files[0].size > 2097152) {
       setAlertMessage("Maximum size exceeded!! Max Limit - 2MB");
       setIsError(true);
       setResponse(true);
-      return;
+      setDisableSubmit(true);
+    } else {
+      setFile(e.target.files[0]);
+      setDisableSubmit(false);
     }
-    setFile(e.target.files[0]);
-    setDisableSubmit(false);
   };
 
   return (
@@ -137,7 +168,6 @@ const CreatePost = () => {
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={response}
         onClick={() => {
-          setDisableSubmit(false);
           setResponse(false);
           setAlertMessage("");
         }}
@@ -199,6 +229,7 @@ const CreatePost = () => {
                 <BootstrapTooltip title="Remove File" placement="top">
                   <CloseRoundedIcon
                     onClick={() => {
+                      document.getElementById('post-file-input').value = null;
                       setFile(null);
                       setDisableSubmit(true);
                     }}
@@ -236,7 +267,16 @@ const CreatePost = () => {
                 variant="contained"
                 color="info"
               >
-                Create
+                {submitted ? (
+                  <div className="submitted-outer">
+                    <div>Creating...</div>
+                    <CircularProgress
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </div>
+                ) : (
+                  "Create"
+                )}
               </Button>
             </div>
           </div>

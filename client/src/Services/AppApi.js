@@ -61,6 +61,14 @@ const appApi = createApi({
       }),
     }),
 
+    fetchAllPosts: builder.mutation({
+      query: (data) => ({
+        url: "/post/fetch/all",
+        method: "post",
+        body: data,
+      }),
+    }),
+
   }),
 });
 
@@ -71,6 +79,7 @@ export const {
   useRequestNewPasswordMutation,
   useResetPasswordMutation,
   useFetchTagsMutation,
-  useCreatePostMutation
+  useCreatePostMutation,
+  useFetchAllPostsMutation
 } = appApi;
 export default appApi;

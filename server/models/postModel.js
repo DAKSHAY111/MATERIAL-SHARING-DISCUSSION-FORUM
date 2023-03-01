@@ -26,7 +26,8 @@ const postSchema = new mongoose.Schema({
   },
 
   media: {
-    type: Array,
+    type: String,
+    required: [true, "A file is must required to create a post!"],
     trim: true,
   },
 
