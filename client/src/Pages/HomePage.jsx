@@ -90,9 +90,7 @@ const HomePage = () => {
       }
     });
 
-    fetchAllPostsFunction({
-      filters: { selectedTags: [] },
-    }).then(({ data, error }) => {
+    fetchAllPostsFunction().then(({ data, error }) => {
       if (data) {
         setAllPostsData(data);
         setPostData(data);
@@ -144,7 +142,15 @@ const HomePage = () => {
               width={"100%"}
               height="100%"
               data={previewFile.media}
-              type={previewFile.media.substr((previewFile.media.length - 3), 3) === "pdf" ? "application/pdf" : "image/jpg"}
+              type={
+                previewFile.media.substr(previewFile.media.length - 3, 3) ===
+                "pdf"
+                  ? "application/pdf"
+                  : `image/${previewFile.media.substr(
+                      previewFile.media.length - 3,
+                      3
+                    )}`
+              }
             />
           </>
         ) : (
@@ -191,7 +197,19 @@ const HomePage = () => {
               </Search>
             </div>
             <div className="search-by-tags-outer">
-              <div className="tags-title">Filter by tags</div>
+              <div className="tags-heading">
+                <div className="tags-title">Filter by tags</div>
+                <BootstrapTooltip placement="right" title="Clear Tags">
+                  <CloseRoundedIcon
+                    style={{
+                      visibility:
+                        selectedTags.length > 0 ? "visible" : "hidden",
+                    }}
+                    onClick={() => setSelectedTags([])}
+                    className="clear-icon-tags"
+                  />
+                </BootstrapTooltip>
+              </div>
               <div className="search-by-tags-wrapper">
                 {tags?.map((tag, idx) => (
                   <div
@@ -248,17 +266,16 @@ const HomePage = () => {
                         setOpenPreview(true);
                       }}
                       className="post-previewing-icon"
-                      />
-                      ) : (
-                        <ImageRoundedIcon
-                        onClick={() => {
-                          setPreviewFile(postData);
-                          setOpenPreview(true);
-                        }}
+                    />
+                  ) : (
+                    <ImageRoundedIcon
+                      onClick={() => {
+                        setPreviewFile(postData);
+                        setOpenPreview(true);
+                      }}
                       className="post-previewing-icon"
                     />
                   )}
-                  {/* {<object height={'500vh'} width={'auto'} aria-labelledby="Document..." data={postData.media} />} */}
                   <CardContent>
                     <Typography
                       variant="body1"
@@ -268,7 +285,19 @@ const HomePage = () => {
                       {postData.description}
                     </Typography>
                     {postData.tags.map((tag) => (
-                      <Chip className="home-post-tags" key={tag} label={tag} />
+                      <Chip
+                        onClick={() => {
+                          if (selectedTags.indexOf(tag) === -1)
+                            setSelectedTags((state) => [...state, tag]);
+                          else
+                            setSelectedTags((state) =>
+                              state.filter((all) => all !== tag)
+                            );
+                        }}
+                        className="home-post-tags"
+                        key={tag}
+                        label={tag}
+                      />
                     ))}
                   </CardContent>
                 </Card>

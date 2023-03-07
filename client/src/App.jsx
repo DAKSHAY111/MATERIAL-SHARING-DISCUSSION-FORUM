@@ -14,6 +14,7 @@ import { AppContext } from "./context/AppContext";
 
 import "./App.css";
 import { useSelector } from "react-redux";
+import Profile from "./pages/Profile";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -23,8 +24,7 @@ function App() {
       <BrowserRouter>
         <NavbarHeader />
         <Routes>
-          {user && <Route path="/" element={<HomePage />} />}
-          {!user && <Route path="/" element={<Login />} />}
+          <Route path="/" element={<HomePage />} />
 
           {!user && <Route path="/signup" element={<Signup />} />}
           {user && <Route path="/signup" element={<HomePage />} />}
@@ -34,6 +34,9 @@ function App() {
 
           {!user && <Route path="/create/file" element={<Login />} />}
           {user && <Route path="/create/file" element={<CreatePost />} />}
+
+          {user && <Route path="/account" element={<Profile />} />}
+          {!user && <Route path="/account" element={<Login />} />}
 
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/new/password" element={<ResetPassword />} />

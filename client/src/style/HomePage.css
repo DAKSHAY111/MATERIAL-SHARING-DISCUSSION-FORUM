@@ -64,6 +64,13 @@
     row-gap: 1rem;
     font-family: Verdana, Geneva, Tahoma, sans-serif !important;
     font-size: medium !important;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px !important;
+    transition: 300ms !important;
+}
+
+.card-outer:hover{
+    transition: 300ms !important;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
 }
 
 .post-previewing-icon{
@@ -75,7 +82,7 @@
 }
 
 .post-previewing-icon:hover{
-    color: #0a6ed2 !important;
+    color: #0662bd !important;
     transition: 600ms ease !important;
 }
 
@@ -91,7 +98,8 @@
 }
 
 .home-post-tags{
-    margin: .2rem .3rem;
+    margin: .2rem .3rem !important;
+    cursor: pointer !important;
 }
 
 .no-posts-found{

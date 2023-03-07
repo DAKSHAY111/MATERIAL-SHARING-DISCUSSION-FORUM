@@ -21,49 +21,15 @@ exports.createPost = catchAsync(async (req, res) => {
 });
 
 exports.fetchAll = catchAsync(async (req, res) => {
-  const { selectedTags } = req.body.filters;
   try {
-    if (selectedTags.length === 0) {
-      const allPosts = await Post.find({}, { _id: 0 });
-      const result = [];
+    const allPosts = await Post.find({}, { _id: 0 }).sort({ createdAt: -1 });
+    const result = [];
 
-      for(let i=0;i<allPosts.length;++i){
-        const owner = await User.findById(allPosts[i].creator, { _id: 0, password: 0, email: 0 });
-        result.push({ postData: allPosts[i], ownerInfo: owner });
-      }
-      res.status(200).json(result);
-    } else {
-      let allPosts = [];
-      for (const tag in selectedTags) {
-        const pipeline = [
-          {
-            '$match': {
-              'tags': {
-                '$in': [
-                  selectedTags[tag], '$tags'
-                ]
-              }
-            }
-          }
-        ]
-        const op = await Post.aggregate(pipeline);
-        allPosts = allPosts.concat(op);
-      }
-      
-      const result = [];
-      const mp = new Map();
-
-      for(let i=0;i<allPosts.length;++i){
-        if(mp.get(allPosts[i]._id.toString()) === undefined){
-
-          const owner = await User.findById(allPosts[i].creator, { _id: 0, password: 0, email: 0 });
-          result.push({ postData: allPosts[i], ownerInfo: owner });
-          mp.set(allPosts[i]._id.toString(), 1);
-
-        }
-      }
-      res.status(200).json(result);
+    for (let i = 0; i < allPosts.length; ++i) {
+      const owner = await User.findById(allPosts[i].creator, { _id: 0, password: 0, email: 0 });
+      result.push({ postData: allPosts[i], ownerInfo: owner });
     }
+    res.status(200).json(result);
   } catch (err) {
     res.status(500).json("Couldn't find posts!! Please refresh and try again!!");
   }
