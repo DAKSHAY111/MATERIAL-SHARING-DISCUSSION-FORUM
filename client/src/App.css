@@ -7,6 +7,15 @@
   pointer-events: none;
 }
 
+.customized_blue{
+  color: #1772cf !important;
+}
+
+.font_verdana{
+  font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+  font-size: medium;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

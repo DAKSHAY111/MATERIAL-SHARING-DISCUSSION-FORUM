@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import NavbarHeader from "./components/NavbarHeader";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Response from "./pages/Response";
@@ -11,18 +10,21 @@ import ResetPassword from "./pages/ResetPassword";
 import CreatePost from "./components/CreatePost";
 
 import { AppContext } from "./context/AppContext";
+import { useSelector } from "react-redux";
+
+import Profile from "./pages/Profile";
+import Sidebar from "./components/Sidebar";
 
 import "./App.css";
-import { useSelector } from "react-redux";
-import Profile from "./pages/Profile";
 
 function App() {
   const user = useSelector((state) => state.user);
+  const [status, setStatus] = useState(false);
 
   return (
-    <AppContext.Provider value={{ user }}>
+    <AppContext.Provider value={{ user, status, setStatus }}>
       <BrowserRouter>
-        <NavbarHeader />
+        <Sidebar />
         <Routes>
           <Route path="/" element={<HomePage />} />
 

@@ -5,6 +5,7 @@
     align-items: center;
     height: 90vh;
     min-width: 480px;
+    margin-top: 60px !important;
 }
 
 .create-post-wrapper{
@@ -36,6 +37,7 @@
     margin: .5rem;
     cursor: pointer;
     padding: .3rem;
+    transform: scale(1.5) !important;
     border-radius: 50%;
     transition: 300ms;
 }
@@ -64,8 +66,8 @@
     display: flex;
     padding: .4rem .9rem;
     text-align: center;
-    border-radius: 1rem;
-    margin: .2rem;
+    border-radius: 1.4rem;
+    margin: .15rem;
     transition: 100ms;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 1rem;

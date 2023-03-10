@@ -1,5 +1,13 @@
+.signup-outer{
+    display: flex;
+    height: calc(100vh - 60px) !important;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px !important;
+}
+
 .signup-wrapper{
-    width: 21%;
+    width: 35%;
     min-width: 360px !important;
     padding: 2rem;
     border: 1px solid black;
@@ -27,12 +35,12 @@
     font-size: xx-large;
 }
 
-.signup-outer{
+/* .signup-outer{
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 90vh;
-}
+} */
 
 .custom-input-field{
     width: 20rem !important;

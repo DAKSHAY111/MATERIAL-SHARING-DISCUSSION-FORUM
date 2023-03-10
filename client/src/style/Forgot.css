@@ -1,11 +1,12 @@
 .email-outer{
     display: flex;
-    width: 520px !important;
+    width: 720px !important;
     border: 1px solid black;
     border-radius: .5rem;
     padding: 4rem;
     justify-content: center !important;
     align-items: center !important;
+    margin-top: 60px !important;
 }
 
 .email-wrapper{

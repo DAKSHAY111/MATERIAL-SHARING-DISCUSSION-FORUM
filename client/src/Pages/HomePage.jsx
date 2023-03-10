@@ -114,8 +114,10 @@ const HomePage = () => {
 
     if (searchField !== "")
       setPostData((state) =>
-        state.filter(({ postData }) =>
-          postData?.title.toLowerCase().includes(searchField.toLowerCase())
+        state.filter(({ postData, ownerInfo }) =>
+          postData?.title.toLowerCase().includes(searchField.toLowerCase()) ||
+          ownerInfo?.name.includes(searchField.toLowerCase()) ||
+          postData?.description.toLowerCase().includes(searchField.toLowerCase())
         )
       );
   }, [selectedTags, allPostsData, setPostData, searchField]);

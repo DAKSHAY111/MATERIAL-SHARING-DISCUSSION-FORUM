@@ -1,7 +1,9 @@
 .home-page-outer{
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 65px) !important;
+    overflow-y: scroll;
     display: flex;
+    margin-top: 60px !important;
 }
 
 .search-outer{

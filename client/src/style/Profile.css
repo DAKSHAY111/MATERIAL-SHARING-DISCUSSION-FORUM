@@ -1,18 +1,25 @@
+.profile-outer{
+    margin-top: 60px !important;
+}
+
 .profile-outer, .profile-wrapper{
     display: flex;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: calc(100vh - 60px) !important;
+    justify-content: center;
+    align-items: center;
 }
 
 .left-hand-menu{
     display: flex;
     flex-direction: column;
-    height: 100% !important;
+    height: calc(100vh - 60px) !important;
     justify-content: flex-start;
     align-items: center;
-    width: 280px !important;
-    margin: 1rem 0;
+    min-width: 250px !important;
+    max-width: 250px !important ;
     background-color: #1772cf;
+    margin: 0 !important;
 }
 
 .nav-outer{
@@ -21,16 +28,21 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: .3rem;
     padding: .7rem .1rem;
     cursor: pointer;
     width: 80% !important;
-    transition: 300ms ease-in-out !important;
-    border-radius: .5rem;
+    transition: 400ms ease-in-out !important;
+    border-bottom: 2px solid transparent;
+    margin-top: 1rem;
+    color: white !important;
 }
 
 .nav-outer:hover{
-    transition: 300ms ease-in-out !important;
-    color: white;
-    background: #1772cf;
+    transition: 400ms ease-in-out !important;
+    border-bottom: 2px solid white;
+}
+
+.profile_active{
+    background: white !important;
+    color: #1772cf !important;
 }
