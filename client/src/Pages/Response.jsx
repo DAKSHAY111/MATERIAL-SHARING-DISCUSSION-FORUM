@@ -12,18 +12,14 @@ const Response = (props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isNavigate) {
-        if(searchParams.get("response"))
-            setResponse(searchParams.get("response"));
-        if(searchParams.get("navigate")){
-            setIsNavigate(searchParams.get("navigate"));
-            setTimeout(() => {
-              navigate("/login");
-            }, 3000);
-        }
-        if(searchParams.get("error"))
-            setIsError(searchParams.get("error"));
+    if(searchParams.get("message")) setResponse(searchParams.get("message"));
+    if (searchParams.get("navigate")) {
+      setIsNavigate(searchParams.get("navigate"));
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
     }
+    if (searchParams.get("error")) setIsError(searchParams.get("error") === "true");
   }, [navigate, isNavigate, searchParams]);
   return (
     <div
@@ -46,18 +42,11 @@ const Response = (props) => {
       <Alert
         style={{
           display: "flex",
-          color:
-            isError === false
-              ? "red"
-              : "green",
+          color: isError ? "red" : "green",
           transform: "scale(1.3)",
           margin: ".7rem",
         }}
-        severity={
-          isError
-            ? "error"
-            : "success"
-        }
+        severity={isError ? "error" : "success"}
       >
         {response}
       </Alert>

@@ -79,7 +79,7 @@ exports.signup = catchAsync(async (req, res) => {
     const token = signToken(name);
     await UnverifiedUser.create({ name: name, email: email, password: hashedPassword, token: token });
 
-    const verificationURL = `http://localhost:5000/verify?user=${name}&token=${token}`;
+    const verificationURL = `http://localhost:5000/user/verify?user=${name}&token=${token}`;
     const reportURL = `http://localhost:3000/report`;
 
     const message = `
@@ -125,7 +125,7 @@ exports.signup = catchAsync(async (req, res) => {
 });
 
 exports.verifyAccount = catchAsync(async (req, res) => {
-  const token = req.params.token;
+  const token = req.query.token;
   try {
     jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
       let response = {};
@@ -134,6 +134,7 @@ exports.verifyAccount = catchAsync(async (req, res) => {
         response.message = "Verification link is expired!!";
         response.status = 403;
       } else {
+        console.log(data);
         const user = await UnverifiedUser.findOne({ name: data.id });
         if (!user) {
           res.redirect(`http://localhost:3000/response?status=100`);
@@ -147,10 +148,10 @@ exports.verifyAccount = catchAsync(async (req, res) => {
         });
 
         response.isError = false;
-        response.message = "Your Account is Verified Successfully :)";
+        response.message = "Your Account is Verified Successfully :) Please wait you will automatically be redirected to login page";
         response.status = 201;
       }
-      res.redirect(`http://localhost:3000/response?status=${response.status}`);
+      res.redirect(`http://localhost:3000/response?message=${response.message}&navigate=${true}&error=${false}`);
     });
   } catch (err) {
     res.redirect(`http://localhost:3000/response?status=503`);
