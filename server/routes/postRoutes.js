@@ -9,5 +9,6 @@ router
   .post(authController.protect, postController.createPost);
 
 router.route("/fetch/all").post(postController.fetchAll);
+router.route("/fetch/options").post(authController.protect, postController.fetchOptions);
 
 module.exports = router;

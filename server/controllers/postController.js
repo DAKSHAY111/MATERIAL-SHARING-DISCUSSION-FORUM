@@ -34,3 +34,21 @@ exports.fetchAll = catchAsync(async (req, res) => {
     res.status(500).json("Couldn't find posts!! Please refresh and try again!!");
   }
 });
+
+exports.fetchOptions = catchAsync(async (req, res) => {
+  const { options, user } = req.body;
+  switch(options){
+    case "recent_material":
+      const posts = await Post.find({ creator: user._id }).limit(10).sort({ createdAt: -1 });
+      res.status(200).json(posts);
+      break;
+    
+    case "recent_doubts":
+      res.status(200).json([]);
+      break;
+    
+    case "recent_replies":
+      res.status(200).json([]);
+      break;
+  }
+});

@@ -1,3 +1,78 @@
 .user-profile-outer{
+    display: grid;
+    grid-template-rows: 3fr 4fr;
+    row-gap: 2rem;
     margin-left: 100px !important;
+    margin-top: 100px !important;
+}
+
+.user-profile-upper{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.user-profile-img{
+    width: 15%;
+}
+
+#user-profile-picture{
+    border-radius: 50%;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.user-profile-lower{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+
+.lower-navigation{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 90% !important;
+}
+
+.btn-group{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: .3rem;
+    padding: .1rem;
+}
+
+.custom_btn{
+    margin: .1rem .3rem !important;
+    padding: .4rem .6rem !important;
+    border-radius: .3rem !important;
+}
+
+.custom_btn:hover, .active, .options_outer:nth-child(odd){
+    background: #1d82e71b !important;
+}
+
+.lower_insider{
+    display: flex;
+    flex-direction: column;
+}
+
+.options_outer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 90% !important;
+    margin: .3rem 0;
+    cursor: pointer;
+    padding: .5rem 1.2rem;
+    border-radius: .3rem;
+    color: #1772cf;
+}
+
+.post_title, .posted_time{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }

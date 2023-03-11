@@ -84,7 +84,8 @@
 }
 
 .post-previewing-icon:hover{
-    color: #0662bd !important;
+    /* color: #0c3762 !important; */
+    color: #0f3f70 !important;
     transition: 600ms ease !important;
 }
 

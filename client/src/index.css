@@ -32,6 +32,10 @@ code {
   column-gap: 2rem;
 }
 
+.m-r-1{
+  margin-right: 1rem !important;
+}
+
 ::-webkit-scrollbar{
   display: none;
 }
