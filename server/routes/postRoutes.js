@@ -10,5 +10,6 @@ router
 
 router.route("/fetch/all").post(postController.fetchAll);
 router.route("/fetch/options").post(authController.protect, postController.fetchOptions);
+router.route("/vote").post(authController.protect, postController.vote);
 
 module.exports = router;

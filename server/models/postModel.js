@@ -36,9 +36,14 @@ const postSchema = new mongoose.Schema({
     default: [],
   },
 
-  likes: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Likes",
+  upVotes: {
+    type: Array,
+    default: [],
+  },
+
+  downVotes: {
+    type: Array,
+    default: [],
   },
 
   comments: {

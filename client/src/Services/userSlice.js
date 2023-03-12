@@ -17,6 +17,10 @@ export const userSlice = createSlice({
       AppApi.endpoints.logout.matchFulfilled,
       (currentState, { payload }) => payload
     );
+    builder.addMatcher(
+      AppApi.endpoints.addPostToFavourites.matchFulfilled,
+      (state, {payload}) => payload
+    )
   },
 });
 

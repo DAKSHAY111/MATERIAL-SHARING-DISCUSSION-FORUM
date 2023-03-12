@@ -1,20 +1,20 @@
 .user-profile-outer{
     display: grid;
-    grid-template-rows: 3fr 4fr;
-    row-gap: 2rem;
+    grid-template-columns: 2fr 4fr;
     margin-left: 100px !important;
-    margin-top: 100px !important;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .user-profile-upper{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    width: 100%;
+    /* width: 100%; */
 }
 
 .user-profile-img{
-    width: 15%;
+    width: 30%;
 }
 
 #user-profile-picture{

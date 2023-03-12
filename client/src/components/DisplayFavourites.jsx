@@ -1,13 +1,6 @@
-import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import {
-  useFetchTagsMutation,
-  useFetchAllPostsMutation,
-} from "../services/appApi";
-import { styled, alpha } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
+import SearchIcon from "@mui/icons-material/Search";
 
-import CloseRounded from "@mui/icons-material/CloseRounded";
 import {
   Alert,
   Backdrop,
@@ -25,22 +18,25 @@ import Chip from "@mui/material/Chip";
 import PictureAsPdfRoundedIcon from "@mui/icons-material/PictureAsPdfRounded";
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import StarOutlineIcon from "@mui/icons-material/StarOutline";
 import StarIcon from "@mui/icons-material/Star";
 import ThumbUpOffAltOutlinedIcon from "@mui/icons-material/ThumbUpOffAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
+import CloseRounded from "@mui/icons-material/CloseRounded";
 
 import { BootstrapTooltip } from "../components/Navbar";
-import { useSelector } from "react-redux";
 
-import "../style/HomePage.css";
+import { styled, alpha } from "@mui/material/styles";
+import InputBase from "@mui/material/InputBase";
 
 import {
   useAddPostToFavouritesMutation,
+  useFetchStarredMutation,
   useAddVoteMutation,
+  useFetchTagsMutation,
 } from "../services/appApi";
+import { useSelector } from "react-redux";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -79,14 +75,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const HomePage = () => {
-  const user = useSelector((state) => state?.user?.data);
+const DisplayFavourites = () => {
+  const user = useSelector((state) => state.user.data);
+  const [posts, setPosts] = useState([]);
 
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [searchField, setSearchField] = useState("");
 
-  const [posts, setPosts] = useState([]);
-  const [allPostsData, setAllPostsData] = useState([]);
+  const [addPostToFavouriteFunction] = useAddPostToFavouritesMutation();
+  const [fetchFavoritePostsFunction] = useFetchStarredMutation();
+  const [voteFunction] = useAddVoteMutation();
+  const [fetchTagsFunction] = useFetchTagsMutation();
 
   const [previewFile, setPreviewFile] = useState(null);
   const [openPreview, setOpenPreview] = useState(false);
@@ -94,13 +94,6 @@ const HomePage = () => {
   const [response, setResponse] = useState(false);
   const [isError, setIsError] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-
-  const [searchField, setSearchField] = useState("");
-
-  const [fetchTagsFunction] = useFetchTagsMutation();
-  const [fetchAllPostsFunction] = useFetchAllPostsMutation();
-  const [addPostToFavouriteFunction] = useAddPostToFavouritesMutation();
-  const [voteFunction] = useAddVoteMutation();
 
   useEffect(() => {
     fetchTagsFunction().then(async ({ data, error }) => {
@@ -112,44 +105,21 @@ const HomePage = () => {
         setTags(data);
       }
     });
-
-    fetchAllPostsFunction().then(({ data, error }) => {
-      if (data) {
-        setAllPostsData(data);
-        setPosts(data);
-      } else {
+    fetchFavoritePostsFunction({
+      headers: {
+        authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    }).then(({ data, error }) => {
+      if (data) setPosts(data);
+      else {
         setIsError(true);
         setAlertMessage(error);
         setResponse(true);
       }
     });
-  }, [fetchTagsFunction, fetchAllPostsFunction]);
-
-  useEffect(() => {
-    setPosts([]);
-
-    if (selectedTags !== [])
-      setPosts(() =>
-        allPostsData.filter(({ postData }) =>
-          selectedTags.every((tag) => postData.tags.includes(tag))
-        )
-      );
-
-    if (searchField !== "")
-      setPosts((state) =>
-        state.filter(
-          ({ postData, ownerInfo }) =>
-            postData?.title.toLowerCase().includes(searchField.toLowerCase()) ||
-            ownerInfo?.name.includes(searchField.toLowerCase()) ||
-            postData?.description
-              .toLowerCase()
-              .includes(searchField.toLowerCase())
-        )
-      );
-  }, [selectedTags, allPostsData, searchField]);
-
+  }, [fetchFavoritePostsFunction, fetchTagsFunction]);
   return (
-    <div className="home-page-outer">
+    <div className="display-favourites-page-outer">
       <Backdrop
         className="backdrop-dialog"
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -231,7 +201,7 @@ const HomePage = () => {
                   />
                 </BootstrapTooltip>
               </div>
-              <div className="search-by-tags-wrapper .tags_scrollbar">
+              <div className="search-by-tags-wrapper">
                 {tags?.map((tag, idx) => (
                   <div
                     className={`tag-representation ${
@@ -279,58 +249,31 @@ const HomePage = () => {
                       />
                     }
                     action={
-                      user && user.favourites?.indexOf(postData._id) === -1 ? (
-                        <BootstrapTooltip title="Add to Starred">
-                          <IconButton
-                            onClick={async () => {
-                              await addPostToFavouriteFunction({
-                                postData,
-                                headers: {
-                                  authorization:
-                                    "Bearer " + localStorage.getItem("token"),
-                                },
-                              }).then(({ data, error }) => {
-                                if (data) {
-                                  setIsError(false);
-                                  setAlertMessage("Post added to Starred");
-                                } else {
-                                  setIsError(true);
-                                  setAlertMessage("");
-                                }
-                                setResponse(true);
-                              });
-                            }}
-                          >
-                            <StarOutlineIcon />
-                          </IconButton>
-                        </BootstrapTooltip>
-                      ) : (
-                        <BootstrapTooltip title="Remove from Starred">
-                          <IconButton
-                            onClick={() => {
-                              addPostToFavouriteFunction({
-                                postData,
-                                headers: {
-                                  authorization:
-                                    "Bearer " + localStorage.getItem("token"),
-                                },
-                              }).then(({ data, error }) => {
-                                console.log(error);
-                                if (data) {
-                                  setIsError(false);
-                                  setAlertMessage("Post removed from Starred");
-                                } else {
-                                  setIsError(true);
-                                  setAlertMessage("");
-                                }
-                                setResponse(true);
-                              });
-                            }}
-                          >
-                            <StarIcon />
-                          </IconButton>
-                        </BootstrapTooltip>
-                      )
+                      <BootstrapTooltip title="Remove from Starred">
+                        <IconButton
+                          onClick={() => {
+                            addPostToFavouriteFunction({
+                              postData,
+                              headers: {
+                                authorization:
+                                  "Bearer " + localStorage.getItem("token"),
+                              },
+                            }).then(({ data, error }) => {
+                              console.log(error);
+                              if (data) {
+                                setIsError(false);
+                                setAlertMessage("Post removed from Starred");
+                              } else {
+                                setIsError(true);
+                                setAlertMessage("");
+                              }
+                              setResponse(true);
+                            });
+                          }}
+                        >
+                          <StarIcon />
+                        </IconButton>
+                      </BootstrapTooltip>
                     }
                   />
                   {postData.media.substr(postData.media.length - 3, 3) ===
@@ -401,16 +344,6 @@ const HomePage = () => {
                                       else return post;
                                     })
                                   );
-                                  setAllPostsData((state) =>
-                                    state.map((post) => {
-                                      if (
-                                        post.postData._id === data.postData._id
-                                      )
-                                        return data;
-                                      else return post;
-                                    })
-                                  );
-
                                   setIsError(false);
                                   setAlertMessage(
                                     "Action completed successfully"
@@ -452,14 +385,6 @@ const HomePage = () => {
                                     else return post;
                                   })
                                 );
-                                setAllPostsData((state) =>
-                                  state.map((post) => {
-                                    if (post.postData._id === data.postData._id)
-                                      return data;
-                                    else return post;
-                                  })
-                                );
-
                                 setIsError(false);
                                 setAlertMessage(
                                   "Action completed successfully"
@@ -491,4 +416,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default DisplayFavourites;

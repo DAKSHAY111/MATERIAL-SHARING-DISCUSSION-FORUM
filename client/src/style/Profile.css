@@ -1,13 +1,14 @@
 .profile-outer{
-    height: calc(100vh - 60px) !important;
-    overflow-y: scroll !important;
-    margin-top: 60px !important;
+    margin-top: 90px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 5rem;
 }
 
-.profile-outer, .profile-wrapper{
+.profile-wrapper{
     display: flex;
     width: 100% !important;
-    height: calc(100vh - 60px) !important;
     justify-content: center;
     align-items: center;
 }
@@ -44,7 +45,8 @@
     border-bottom: 2px solid white;
 }
 
-.profile_active{
-    background: white !important;
-    color: #1772cf !important;
+.display-favourites-page-outer{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }

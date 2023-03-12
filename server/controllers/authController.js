@@ -5,6 +5,7 @@ const AppError = require("../utils/appError");
 const sendEmail = require("../utils/email");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const Post = require("../models/postModel");
 
 const hashPassword = async (pass) => {
   pass = await bcrypt.hash(pass, 10);
@@ -26,9 +27,11 @@ const createSendToken = (user, statusCode, res, expiryTime) => {
   };
 
   const newUserData = new Object({
+    _id: user._id,
     name: user.name,
     photo: user.photo,
     role: user.role,
+    favourites: user.favourites,
   });
 
   res.cookie("jwt", token, cookieOptions);
@@ -293,11 +296,40 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
     req.body.user = freshUser;
     next();
-  }catch(err){
-    if(err.message === "jwt expired"){
+  } catch (err) {
+    if (err.message === "jwt expired") {
       return next(
         new AppError("Your session is expired!! Please log in again", 401)
       );
     }
   }
+});
+
+exports.addToStarred = catchAsync(async (req, res) => {
+  const { postData, user } = req.body;
+  try {
+    const likingUser = await User.findById(user._id);
+
+    if (likingUser.favourites.indexOf(postData._id) === -1)
+      likingUser.favourites.push(postData._id);
+    else
+      likingUser.favourites.splice(likingUser.favourites.indexOf(postData._id), 1);
+
+    await likingUser.save();
+    createSendToken(likingUser, 200, res, '9999 years');
+  } catch (err) {
+    res.status(500).json("Error occurred while processing! Please try again!");
+  }
+});
+
+exports.favourites = catchAsync(async (req, res) => {
+  const { user } = req.body;
+  const response = [];
+
+  for (let i = 0; i < user.favourites.length; ++i) {
+    const post = await Post.findById(user.favourites[i]);
+    const owner = await User.findById(post.creator);
+    response.push({ postData: post, ownerInfo: owner });
+  }
+  res.status(200).json(response);
 });

@@ -38,6 +38,11 @@ const userSchema = new mongoose.Schema({
     ref: "Post",
   },
 
+  favourites: {
+    type: Array,
+    default: [],
+  }
+
 });
 userSchema.methods.correctPassword = async (candidatePassword, userPassword) => await bcrypt.compare(candidatePassword, userPassword);
 

@@ -77,6 +77,30 @@ const appApi = createApi({
       }),
     }),
 
+    addPostToFavourites: builder.mutation({
+      query: (data) => ({
+        url: "/user/add/starred",
+        method: "post",
+        body: data,
+      }),
+    }),
+
+    fetchStarred: builder.mutation({
+      query: (data) => ({
+        url: "/user/fetch/favourites",
+        method: "post",
+        body: data,
+      }),
+    }),
+
+    addVote: builder.mutation({
+      query: (data) => ({
+        url: "/post/vote",
+        method: "post",
+        body: data,
+      }),
+    }),
+
   }),
 });
 
@@ -90,5 +114,8 @@ export const {
   useCreatePostMutation,
   useFetchAllPostsMutation,
   useFetchPostWithOptionsMutation,
+  useAddPostToFavouritesMutation,
+  useFetchStarredMutation,
+  useAddVoteMutation,
 } = appApi;
 export default appApi;

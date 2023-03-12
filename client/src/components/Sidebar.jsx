@@ -22,14 +22,9 @@ import LoginRounded from "@mui/icons-material/LoginRounded";
 import PersonAddRounded from "@mui/icons-material/PersonAddRounded";
 import ExitToAppRounded from "@mui/icons-material/ExitToAppRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import BackupRoundedIcon from '@mui/icons-material/BackupRounded';
-import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
-import QuestionMarkRoundedIcon from '@mui/icons-material/QuestionMarkRounded';
 import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../services/appApi";
 import { useSelector } from "react-redux";
-import { AppContext } from "../context/AppContext";
 
 const drawerWidth = 240;
 
@@ -108,8 +103,6 @@ export default function Sidebar() {
   const handleOpenEvent = () => setOpen(true);
   const handleCloseEvent = () => setOpen(false);
 
-  const { status, setStatus } = React.useContext(AppContext);
-
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -145,10 +138,7 @@ export default function Sidebar() {
         <List>
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
-              onClick={() => {
-                setStatus("/");
-                navigate("/");
-              }}
+              onClick={() => navigate("/")}
               className="customized_blue font_verdana"
               onMouseEnter={handleOpenEvent}
               sx={{
@@ -169,13 +159,10 @@ export default function Sidebar() {
               <ListItemText primary={"Home"} sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
-          {user && (status !== "/account") && (
+          {user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => {
-                  setStatus("/create/file");
-                  navigate("/create/file");
-                }}
+                onClick={() => navigate("/create/file")}
                 className="customized_blue font_verdana"
                 onMouseEnter={handleOpenEvent}
                 sx={{
@@ -200,13 +187,10 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
           )}
-          {user && (status !== "/account") && (
+          {user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => {
-                  setStatus("/discuss");
-                  navigate("/discuss");
-                }}
+                onClick={() => navigate("/discuss")}
                 className="customized_blue font_verdana"
                 onMouseEnter={handleOpenEvent}
                 sx={{
@@ -234,10 +218,7 @@ export default function Sidebar() {
           {!user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => {
-                  setStatus("/login");
-                  navigate("/login");
-                }}
+                onClick={() => navigate("/login")}
                 className="customized_blue font_verdana"
                 onMouseEnter={handleOpenEvent}
                 sx={{
@@ -265,10 +246,7 @@ export default function Sidebar() {
           {!user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => {
-                  setStatus("/signup");
-                  navigate("/signup");
-                }}
+                onClick={() => navigate("/signup")}
                 className="customized_blue font_verdana"
                 onMouseEnter={handleOpenEvent}
                 sx={{
@@ -296,10 +274,7 @@ export default function Sidebar() {
           {user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => {
-                  setStatus("/account");
-                  navigate("/account");
-                }}
+                onClick={() => navigate("/account")}
                 className="customized_blue font_verdana"
                 onMouseEnter={handleOpenEvent}
                 sx={{
@@ -324,135 +299,15 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
           )}
-          {user && (status === "/account") && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                onClick={() => {
-                  setStatus("/account");
-                  navigate("/account");
-                }}
-                className="customized_blue font_verdana"
-                onMouseEnter={handleOpenEvent}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <EditRoundedIcon className="customized_blue font_verdana" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"Edit Profile"}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          )}
-          {user && (status === "/account") && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                onClick={() => {
-                  setStatus("/account");
-                  navigate("/account");
-                }}
-                className="customized_blue font_verdana"
-                onMouseEnter={handleOpenEvent}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <BackupRoundedIcon className="customized_blue font_verdana" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"My Material"}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          )}
-          {user && (status === "/account") && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                onClick={() => {
-                  setStatus("/account");
-                  navigate("/account");
-                }}
-                className="customized_blue font_verdana"
-                onMouseEnter={handleOpenEvent}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <FavoriteRoundedIcon className="customized_blue font_verdana" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"Favourites"}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          )}
-          {user && (status === "/account") && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                onClick={() => {
-                  setStatus("/account");
-                  navigate("/account");
-                }}
-                className="customized_blue font_verdana"
-                onMouseEnter={handleOpenEvent}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <QuestionMarkRoundedIcon className="customized_blue font_verdana" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"Doubts Posted"}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          )}
           {user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 onClick={() => {
-                  logoutFunction();
+                  logoutFunction({
+                    headers: {
+                      authorization: "Bearer " + localStorage.getItem("token"),
+                    },
+                  });
                   navigate("/login");
                 }}
                 className="customized_blue font_verdana"
