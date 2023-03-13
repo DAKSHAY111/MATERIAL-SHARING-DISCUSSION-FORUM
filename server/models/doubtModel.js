@@ -1,0 +1,31 @@
+const mongoose = require("mongoose");
+
+const doubtSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+    },
+    doubt: {
+        type: String,
+        required: [true, "Doubt cannot be empty"],
+    },
+    description: {
+        type: String,
+        required: [true, "Description cannot be empty"],
+    },
+    replies: {
+        type: [mongoose.Schema.ObjectId],
+        ref: "Reply",
+    },
+    tags: {
+        type: Array,
+        default: [],
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now(),
+    },
+});
+
+const Doubt = mongoose.model("Doubt", doubtSchema);
+module.exports = Doubt;
