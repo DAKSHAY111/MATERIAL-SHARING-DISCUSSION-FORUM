@@ -9,6 +9,10 @@ const doubtSchema = new mongoose.Schema({
         type: String,
         required: [true, "Doubt cannot be empty"],
     },
+    media: {
+        type: String,
+        trim: true,
+      },
     description: {
         type: String,
         required: [true, "Description cannot be empty"],
