@@ -20,7 +20,11 @@ export const userSlice = createSlice({
     builder.addMatcher(
       AppApi.endpoints.addPostToFavourites.matchFulfilled,
       (state, {payload}) => payload
-    )
+    );
+    builder.addMatcher(
+      AppApi.endpoints.fetchUserData.matchFulfilled,
+      (state, { payload }) => payload
+    );
   },
 });
 

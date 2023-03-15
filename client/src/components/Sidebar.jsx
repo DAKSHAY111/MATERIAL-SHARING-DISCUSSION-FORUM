@@ -25,6 +25,7 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../services/appApi";
 import { useSelector } from "react-redux";
+import Star from "@mui/icons-material/Star";
 
 const drawerWidth = 240;
 
@@ -302,12 +303,36 @@ export default function Sidebar() {
           {user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
+                onClick={() => navigate("/starred")}
+                className="customized_blue font_verdana"
+                onMouseEnter={handleOpenEvent}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Star className="customized_blue font_verdana" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={"Starred"}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          )}
+          {user && (
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton
                 onClick={() => {
-                  logoutFunction({
-                    headers: {
-                      authorization: "Bearer " + localStorage.getItem("token"),
-                    },
-                  });
+                  logoutFunction();
                   navigate("/login");
                 }}
                 className="customized_blue font_verdana"

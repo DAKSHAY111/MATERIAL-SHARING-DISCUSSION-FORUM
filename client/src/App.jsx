@@ -12,10 +12,11 @@ import CreatePost from "./components/CreatePost";
 import { AppContext } from "./context/AppContext";
 import { useSelector } from "react-redux";
 
-import Profile from "./pages/Profile";
 import Sidebar from "./components/Sidebar";
 
 import "./App.css";
+import DisplayProfile from "./components/DisplayProfile";
+import DisplayFavourites from "./components/DisplayFavourites";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -37,7 +38,10 @@ function App() {
           {!user && <Route path="/create/file" element={<Login />} />}
           {user && <Route path="/create/file" element={<CreatePost />} />}
 
-          {user && <Route path="/account" element={<Profile />} />}
+          {user && <Route path="/account" element={<DisplayProfile />} />}
+          {!user && <Route path="/account" element={<Login />} />}
+
+          {user && <Route path="/starred" element={<DisplayFavourites />} />}
           {!user && <Route path="/account" element={<Login />} />}
 
           <Route path="/forgot" element={<ForgotPassword />} />

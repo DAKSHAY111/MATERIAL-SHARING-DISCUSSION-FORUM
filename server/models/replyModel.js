@@ -9,6 +9,10 @@ const replySchema = new mongoose.Schema({
         type: String,
         required: [true, "Reply cannot be empty"],
     },
+    replyToPost: {
+        type: mongoose.Schema.ObjectId,
+        ref: "doubt",
+    },
     createdAt: {
         type: Date,
         default: Date.now(),
@@ -16,8 +20,8 @@ const replySchema = new mongoose.Schema({
     upVotes: {
         type: Array,
         default: [],
-      },
-    
+    },
+
     downVotes: {
         type: Array,
         default: [],

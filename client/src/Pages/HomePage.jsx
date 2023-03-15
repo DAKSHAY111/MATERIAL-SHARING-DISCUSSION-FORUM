@@ -112,7 +112,7 @@ const HomePage = () => {
     fetchTagsFunction().then(async ({ data, error }) => {
       if (error) {
         setIsError(true);
-        setAlertMessage(error);
+        setAlertMessage("Unable to connect to the server :(");
         setResponse(true);
       } else {
         setTags(data);
@@ -125,7 +125,7 @@ const HomePage = () => {
         setPosts(data);
       } else {
         setIsError(true);
-        setAlertMessage(error);
+        setAlertMessage("Unable to connect to the server :(");
         setResponse(true);
       }
     });
@@ -153,14 +153,18 @@ const HomePage = () => {
         )
       );
 
-    switch(sortCriteria){
+    switch (sortCriteria) {
       case "most_votes":
-        setPosts((state) => state.sort((a, b) => b.postData.upVotes.length - a.postData.upVotes.length));
+        setPosts((state) =>
+          state.sort(
+            (a, b) => (b.postData.upVotes.length - b.postData.downVotes.length) - (a.postData.upVotes.length - a.postData.downVotes.length)
+          )
+        );
         break;
-      
-        default:
-          setPosts((state) => state);
-          break;
+
+      default:
+        setPosts((state) => state);
+        break;
     }
   }, [selectedTags, allPostsData, searchField, sortCriteria]);
 
@@ -311,10 +315,16 @@ const HomePage = () => {
                       />
                     }
                     action={
-                      user && user.favourites?.indexOf(postData._id) === -1 ? (
+                      !user || user?.favourites?.indexOf(postData._id) === -1 ? (
                         <BootstrapTooltip title="Add to Starred">
                           <IconButton
                             onClick={async () => {
+                              if(!user){
+                                setIsError(true);
+                                setAlertMessage("Please Log in to continue");
+                                setResponse(true);
+                                return;
+                              }
                               await addPostToFavouriteFunction({
                                 postData,
                                 headers: {
@@ -340,6 +350,12 @@ const HomePage = () => {
                         <BootstrapTooltip title="Remove from Starred">
                           <IconButton
                             onClick={() => {
+                              if(!user){
+                                setIsError(true);
+                                setAlertMessage("Please Log in to continue...");
+                                setResponse(true);
+                                return;
+                              }
                               addPostToFavouriteFunction({
                                 postData,
                                 headers: {
@@ -414,6 +430,12 @@ const HomePage = () => {
                         <div className="action-outer">
                           <IconButton
                             onClick={() => {
+                              if(!user){
+                                setIsError(true);
+                                setAlertMessage("Please Log in to continue");
+                                setResponse(true);
+                                return;
+                              }
                               voteFunction({
                                 postData,
                                 type: "up",
@@ -454,7 +476,7 @@ const HomePage = () => {
                               });
                             }}
                           >
-                            {postData.upVotes.indexOf(user._id) === -1 ? (
+                            {postData?.upVotes?.indexOf(user?._id) === -1 ? (
                               <ThumbUpOffAltOutlinedIcon />
                             ) : (
                               <ThumbUpAltIcon />
@@ -467,6 +489,12 @@ const HomePage = () => {
 
                         <IconButton
                           onClick={() => {
+                            if(!user){
+                              setIsError(true);
+                              setAlertMessage("Please Log in to continue");
+                              setResponse(true);
+                              return;
+                            }
                             voteFunction({
                               postData,
                               type: "down",
@@ -503,7 +531,7 @@ const HomePage = () => {
                             });
                           }}
                         >
-                          {postData.downVotes.indexOf(user._id) === -1 ? (
+                          {postData.downVotes.indexOf(user?._id) === -1 ? (
                             <ThumbDownAltOutlinedIcon />
                           ) : (
                             <ThumbDownAltIcon />

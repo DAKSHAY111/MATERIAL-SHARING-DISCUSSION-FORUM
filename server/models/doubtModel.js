@@ -12,14 +12,14 @@ const doubtSchema = new mongoose.Schema({
     media: {
         type: String,
         trim: true,
-      },
+    },
     description: {
         type: String,
         required: [true, "Description cannot be empty"],
     },
     replies: {
-        type: [mongoose.Schema.ObjectId],
-        ref: "Reply",
+        type: Array,
+        default: [],
     },
     tags: {
         type: Array,

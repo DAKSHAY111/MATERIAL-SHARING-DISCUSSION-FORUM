@@ -5,7 +5,11 @@ import {
   Alert,
   Backdrop,
   CardActions,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Snackbar,
 } from "@mui/material";
 
@@ -36,7 +40,9 @@ import {
   useAddVoteMutation,
   useFetchTagsMutation,
 } from "../services/appApi";
+
 import { useSelector } from "react-redux";
+import "../style/Profile.css";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -97,6 +103,8 @@ const DisplayFavourites = () => {
   const [isError, setIsError] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
+  const [sortCriteria, setSortCriteria] = useState("most_recent");
+
   useEffect(() => {
     fetchTagsFunction().then(async ({ data, error }) => {
       if (error) {
@@ -107,11 +115,7 @@ const DisplayFavourites = () => {
         setTags(data);
       }
     });
-    fetchFavoritePostsFunction({
-      headers: {
-        authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    }).then(({ data, error }) => {
+    fetchFavoritePostsFunction().then(({ data, error }) => {
       if (data) {
         setAllPostsData(data);
         setPosts(data);
@@ -144,7 +148,21 @@ const DisplayFavourites = () => {
               .includes(searchField.toLowerCase())
         )
       );
-  }, [selectedTags, allPostsData, searchField]);
+
+    switch (sortCriteria) {
+      case "most_votes":
+        setPosts((state) =>
+          state.sort(
+            (a, b) => b.postData.upVotes.length - a.postData.upVotes.length
+          )
+        );
+        break;
+
+      default:
+        setPosts((state) => state);
+        break;
+    }
+  }, [selectedTags, allPostsData, searchField, sortCriteria]);
   return (
     <div className="display-favourites-page-outer">
       <Backdrop
@@ -251,6 +269,22 @@ const DisplayFavourites = () => {
                 ))}
               </div>
             </div>
+            <div className="search-by-votes">
+              <FormControl fullWidth>
+                <InputLabel id="sort-posts-by-dropdown">Sort By</InputLabel>
+                <Select
+                  labelId="sort-posts-by-dropdown"
+                  fullWidth
+                  className="custom_dropdown"
+                  label="Sort by"
+                  value={sortCriteria}
+                  onChange={(e) => setSortCriteria(e.target.value)}
+                >
+                  <MenuItem value="most_recent">Most Recent</MenuItem>
+                  <MenuItem value="most_votes">Most Votes</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
           </div>
         </div>
         <div className="post-outer">
@@ -281,10 +315,6 @@ const DisplayFavourites = () => {
                           onClick={() => {
                             addPostToFavouriteFunction({
                               postData,
-                              headers: {
-                                authorization:
-                                  "Bearer " + localStorage.getItem("token"),
-                              },
                             }).then(({ data, error }) => {
                               if (data) {
                                 setIsError(false);
@@ -355,10 +385,6 @@ const DisplayFavourites = () => {
                               voteFunction({
                                 postData,
                                 type: "up",
-                                headers: {
-                                  authorization:
-                                    "Bearer " + localStorage.getItem("token"),
-                                },
                               }).then(({ data, error }) => {
                                 if (data) {
                                   setPosts((state) =>
@@ -398,10 +424,6 @@ const DisplayFavourites = () => {
                             voteFunction({
                               postData,
                               type: "down",
-                              headers: {
-                                authorization:
-                                  "Bearer " + localStorage.getItem("token"),
-                              },
                             }).then(({ data, error }) => {
                               if (data) {
                                 setPosts((state) =>

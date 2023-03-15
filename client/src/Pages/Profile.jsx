@@ -1,7 +1,7 @@
-import EditRounded from "@mui/icons-material/EditRounded";
-import FavoriteRounded from "@mui/icons-material/FavoriteRounded";
-import HelpOutlineRounded from "@mui/icons-material/HelpOutlineRounded";
-import ListAltRounded from "@mui/icons-material/ListAltRounded";
+// import EditRounded from "@mui/icons-material/EditRounded";
+import StarIcon from "@mui/icons-material/Star";
+// import HelpOutlineRounded from "@mui/icons-material/HelpOutlineRounded";
+// import ListAltRounded from "@mui/icons-material/ListAltRounded";
 import PersonRounded from "@mui/icons-material/PersonRounded";
 import { Button } from "@mui/material";
 import React, { useState } from "react";
@@ -21,17 +21,8 @@ const Profile = () => {
           <Button onClick={() => setStatus("/account")} className={`custom_btn ${status === "/account" ? "active" : ""}`} startIcon={<PersonRounded />}>
             Profile
           </Button>
-          <Button onClick={() => setStatus("/edit_profile")} className={`custom_btn ${status === "/edit_profile" ? "active" : ""}`} startIcon={<EditRounded />}>
-            Edit Profile
-          </Button>
-          <Button onClick={() => setStatus("/my_material")} className={`custom_btn ${status === "/my_material" ? "active" : ""}`} startIcon={<ListAltRounded />}>
-            My Material
-          </Button>
-          <Button onClick={() => setStatus("/favourites")} className={`custom_btn ${status === "/favourites" ? "active" : ""}`} startIcon={<FavoriteRounded />}>
-            Favourites
-          </Button>
-          <Button onClick={() => setStatus("/doubts")} className={`custom_btn ${status === "/doubts" ? "active" : ""}`} startIcon={<HelpOutlineRounded />}>
-            Doubts
+          <Button onClick={() => setStatus("/favourites")} className={`custom_btn ${status === "/favourites" ? "active" : ""}`} startIcon={<StarIcon />}>
+            Starred
           </Button>
         </div>
       </div>

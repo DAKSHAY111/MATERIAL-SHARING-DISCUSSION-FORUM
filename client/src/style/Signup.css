@@ -4,6 +4,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 60px !important;
+    min-width: 480px;
 }
 
 .signup-wrapper{
@@ -96,4 +97,16 @@
     align-items: center !important;
     flex-direction: column;
     text-align: center;
+}
+
+@media screen and (max-width:640px) {
+    .signup-outer{
+        width: 100%;
+        position: relative;
+        left: 15%;
+    }
+
+    .signup-wrapper{
+        width: 100%;
+    }
 }

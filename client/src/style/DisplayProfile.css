@@ -1,32 +1,92 @@
 .user-profile-outer{
-    display: grid;
-    grid-template-columns: 2fr 4fr;
-    margin-left: 100px !important;
+    display: flex;
     justify-content: flex-start;
-    align-items: flex-start;
+    width: 100% !important;
+    position: relative;
+    left: 10%;
+    margin-top: 10% !important;
+    column-gap: 2rem;
 }
 
 .user-profile-upper{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    /* width: 100%; */
+    column-gap: 1rem;
+    margin: 1rem;
+    width: 20% !important;
 }
 
-.user-profile-img{
-    width: 30%;
+.user-profile-top-i{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    width: 90% !important;
+}
+
+.user-profile-top-i-inner{
+    display: flex;
+    flex-direction: row;
+    column-gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    width: 100% !important;
+}
+
+.button-group-col{
+    display: flex;
+    flex-direction: column;
+    width: inherit !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-profile-btn{
+    display: flex;
+    width: 100%;
+}
+
+.users-about{
+    display: flex;
+    word-wrap: break-word;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: small;
+    width: 100% !important;
+}
+
+.community-stats .title{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: large;
+    font-weight: 600;
+    text-align: center;
+}
+
+.stats-info{
+    display: flex;
+    flex-direction: column;
+    row-gap: .3rem;
+}
+
+.stats-chip{
+    margin: .15rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: small;
+    font-weight: 550;
 }
 
 #user-profile-picture{
     border-radius: 50%;
-    width: 100% !important;
-    height: 100% !important;
+    /* width: 100% !important;
+    height: 100% !important; */
+    width: 100px !important;
+    height: 100px !important;
 }
 
 .user-profile-lower{
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
+    width: 65% !important;
 }
 
 .lower-navigation{
@@ -75,4 +135,29 @@
 
 .post_title, .posted_time{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.user-display-name{
+    /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: larger;
+    font-weight: 600;
+}
+
+.user-name{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: small;
+}
+
+@media screen and (max-width:880px) {
+    .user-profile-outer{
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        position: relative;
+        left: 20%;
+    }
+    .user-profile-lower, .user-profile-upper{
+        width: 100% !important;
+    }
 }

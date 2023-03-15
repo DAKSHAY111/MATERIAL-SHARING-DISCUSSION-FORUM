@@ -91,9 +91,6 @@ const CreatePost = () => {
         description,
         media: urlData,
         user,
-        headers: {
-          authorization: "Bearer " + localStorage.getItem("token"),
-        },
       }).then(({ data, error }) => {
         setResponse(true);
         if (error) {

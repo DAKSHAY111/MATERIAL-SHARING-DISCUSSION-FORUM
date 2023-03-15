@@ -29,9 +29,14 @@ const createSendToken = (user, statusCode, res, expiryTime) => {
   const newUserData = new Object({
     _id: user._id,
     name: user.name,
+    displayName: user.displayName,
     photo: user.photo,
     role: user.role,
     favourites: user.favourites,
+    materialCount: user.materialCount,
+    doubtsCount: user.doubtsCount,
+    repliesCount: user.repliesCount,
+    reputation: user.reputation,
   });
 
   res.cookie("jwt", token, cookieOptions);
@@ -146,6 +151,8 @@ exports.verifyAccount = catchAsync(async (req, res) => {
         await UnverifiedUser.findOneAndDelete({ name: data.id });
         await User.create({
           name: user.name,
+          displayName: user.name,
+          photo: process.env.DEFAULT_PROFILE_PIC,
           email: user.email,
           password: user.password,
         });
@@ -268,7 +275,7 @@ exports.myProfile = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  const { headers } = req.body;
+  const { headers } = req;
   let token;
   if (
     headers.authorization &&
@@ -332,4 +339,14 @@ exports.favourites = catchAsync(async (req, res) => {
     response.push({ postData: post, ownerInfo: owner });
   }
   res.status(200).json(response);
+});
+
+exports.fetchData = catchAsync(async (req, res) => {
+  const { user } = req.body;
+  try{
+    const _user = await User.findById(user._id);
+    createSendToken(_user, 200, res);
+  }catch(err){
+    res.status(500).json("Error occurred while processing! Please try again!");
+  }
 });

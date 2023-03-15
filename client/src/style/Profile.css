@@ -49,4 +49,13 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    position: relative;
+    margin-top: 5%;
+}
+
+@media screen and (max-width:640px){
+    .display-favourites-page-outer{
+        position: relative;
+        left: 5%;
+    }
 }

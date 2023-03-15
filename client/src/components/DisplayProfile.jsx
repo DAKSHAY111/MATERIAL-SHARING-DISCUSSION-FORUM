@@ -1,11 +1,11 @@
-import { Button } from "@mui/material";
+import { Button, Chip } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ListAltRoundedIcon from "@mui/icons-material/ListAltRounded";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import { useFetchPostWithOptionsMutation } from "../services/appApi";
+import { useFetchPostWithOptionsMutation, useFetchUserDataMutation } from "../services/appApi";
 
 import "../style/DisplayProfile.css";
 import { useNavigate } from "react-router-dom";
@@ -18,11 +18,11 @@ const DisplayProfile = () => {
 
   const navigate = useNavigate();
   const [fetchPostWithOptionsFunction] = useFetchPostWithOptionsMutation();
+  const [updateDataFunction] = useFetchUserDataMutation();
 
   useEffect(() => {
     fetchPostWithOptionsFunction({
       options,
-      headers: { authorization: "Bearer " + localStorage.getItem("token") },
     }).then(({ data, error }) => {
       if (error) {
       } else {
@@ -31,16 +31,49 @@ const DisplayProfile = () => {
     });
   }, [options, fetchPostWithOptionsFunction]);
 
+  useEffect(() => {
+    updateDataFunction().then(({ data, error }) => {
+      console.log(data);
+      console.log(error);
+    });
+  }, [updateDataFunction]);
+
   return (
     <div className="user-profile-outer">
       <div className="user-profile-upper">
-        <div className="user-profile-img">
-          <img
-            alt={user.name}
-            style={{ height: "10%", width: "10%" }}
-            src={user.photo}
-            id="user-profile-picture"
-          />
+        <div className="user-profile-top-i">
+          <div className="user-profile-top-i-inner">
+            <div className="user-profile-img">
+              <img alt={user?.name} src={user?.photo} id="user-profile-picture" />
+            </div>
+            <div className="user-name-div">
+              <div className="user-display-name">
+                {user?.displayName[0].toUpperCase() + user?.displayName.substr(1)}
+              </div>
+              <div className="user-name">{user?.name}</div>
+            </div>
+          </div>
+          <div className="users-about">
+            {user?.about}
+          </div>
+          <Button
+            className="custom_btn active edit-profile-btn"
+            variant="text"
+            color="info"
+          >
+            Edit Profile
+          </Button>
+          <div className="community-stats">
+            <div className="title">
+              Community Stats
+            </div>
+            <div className="stats-info">
+              <Chip className="stats-chip" label={`${user?.materialCount} Material Posted`} />
+              <Chip className="stats-chip" label={`Doubts Posted`} />
+              <Chip className="stats-chip" label={`Replied to Doubts`} />
+              <Chip className="stats-chip" label={`${user?.reputation} Reputation Earned`} />
+            </div>
+          </div>
         </div>
       </div>
       <div className="user-profile-lower">

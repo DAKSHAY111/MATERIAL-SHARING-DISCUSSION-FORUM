@@ -11,5 +11,6 @@ router.route("/new/password").post(authController.forgotPassword);
 router.route("/reset/password").post(authController.resetPassword);
 router.route("/add/starred").post(authController.protect, authController.addToStarred);
 router.route("/fetch/favourites").post(authController.protect, authController.favourites);
+router.route("/fetch/data").get(authController.protect, authController.fetchData);
 
 module.exports = router;

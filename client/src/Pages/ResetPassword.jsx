@@ -55,8 +55,6 @@ const ResetPassword = () => {
     }
     resetPasswordFunc({ token: token, newPassword: password }).then(
       ({ data, error }) => {
-        console.log(data);
-        console.log(error);
         if (error) {
           setIsError(true);
           setAlertMessage(error.data);

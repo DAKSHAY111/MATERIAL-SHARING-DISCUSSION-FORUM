@@ -27,3 +27,10 @@
     font-size: medium;
     width: inherit !important;
 }
+
+@media screen and (max-width:720px) {
+    .email-outer{
+        position: relative;
+        left: 240px;
+    }
+}

@@ -27,6 +27,7 @@ const appApi = createApi({
         url: "/user/logout",
         method: "POST",
         body: data,
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
       }),
     }),
 
@@ -43,6 +44,7 @@ const appApi = createApi({
         url: "/user/reset/password",
         method: "POST",
         body: data,
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
       }),
     }),
 
@@ -58,6 +60,7 @@ const appApi = createApi({
         url: "/post/create",
         method: "post",
         body: data,
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
       }),
     }),
 
@@ -74,6 +77,7 @@ const appApi = createApi({
         url: "/post/fetch/options",
         method: "post",
         body: data,
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
       }),
     }),
 
@@ -82,6 +86,7 @@ const appApi = createApi({
         url: "/user/add/starred",
         method: "post",
         body: data,
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
       }),
     }),
 
@@ -90,6 +95,7 @@ const appApi = createApi({
         url: "/user/fetch/favourites",
         method: "post",
         body: data,
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
       }),
     }),
 
@@ -98,6 +104,15 @@ const appApi = createApi({
         url: "/post/vote",
         method: "post",
         body: data,
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
+      }),
+    }),
+
+    fetchUserData: builder.mutation({
+      query: () => ({
+        url: "/user/fetch/data",
+        method: "get",
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
       }),
     }),
 
@@ -117,5 +132,6 @@ export const {
   useAddPostToFavouritesMutation,
   useFetchStarredMutation,
   useAddVoteMutation,
+  useFetchUserDataMutation,
 } = appApi;
 export default appApi;

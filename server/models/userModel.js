@@ -8,6 +8,16 @@ const userSchema = new mongoose.Schema({
     required: [true, "user must have a name"],
   },
 
+  displayName: {
+    type: String,
+    default: "",
+  },
+
+  about: {
+    type: String,
+    default: "",
+  },
+
   email: {
     type: String,
     required: [true, "user must provide an email"],
@@ -41,6 +51,26 @@ const userSchema = new mongoose.Schema({
   favourites: {
     type: Array,
     default: [],
+  },
+
+  materialCount: {
+    type: Number,
+    default: 0,
+  },
+
+  doubtsCount: {
+    type: Number,
+    default: 0,
+  },
+
+  repliesCount: {
+    type: Number,
+    default: 0,
+  },
+
+  reputation: {
+    type: Number,
+    default: 0,
   }
 
 });

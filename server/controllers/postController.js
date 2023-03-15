@@ -13,6 +13,9 @@ exports.createPost = catchAsync(async (req, res) => {
       createdAt: Date.now(),
       media: media,
     });
+    user.materialCount += 1;
+    await user.save();
+
     delete newPost._id;
     res.status(201).json(newPost);
   } catch (err) {
@@ -59,26 +62,38 @@ exports.vote = catchAsync(async (req, res) => {
     const post = await Post.findById(postData._id);
     const owner = await User.findById(post.creator);
 
-    if(type === "up"){
-      if(post.downVotes.indexOf(user._id) !== -1)
-        post.downVotes.splice(post.downVotes.indexOf(user._id), 1);
-
-      if(post.upVotes.indexOf(user._id) === -1)
+    if (type === "up") {
+      if (post.upVotes.indexOf(user._id) === -1) {
         post.upVotes.push(user._id);
-      else
+        owner.reputation += 1;
+      } else{
         post.upVotes.splice(post.upVotes.indexOf(user._id), 1);
-    }
-    else{
-      if(post.upVotes.indexOf(user._id) !== -1)
-        post.upVotes.splice(post.upVotes.indexOf(user._id), 1);
-        
-      if(post.downVotes.indexOf(user._id) === -1)
-        post.downVotes.push(user._id);
-      else
+        owner.reputation -= 1;
+      }
+
+      if (post.downVotes.indexOf(user._id) !== -1) {
         post.downVotes.splice(post.downVotes.indexOf(user._id), 1);
+        owner.reputation += 1;
+      }
     }
-    
+    else {
+      if (post.downVotes.indexOf(user._id) === -1){
+        post.downVotes.push(user._id);
+        owner.reputation -= 1;
+      }else{
+        post.downVotes.splice(post.downVotes.indexOf(user._id), 1);
+        owner.reputation += 1;
+      }
+
+      if (post.upVotes.indexOf(user._id) !== -1){
+        post.upVotes.splice(post.upVotes.indexOf(user._id), 1);
+        owner.reputation -= 1;
+      }
+    }
+
     await post.save();
+    await owner.save();
+
     res.status(200).json({ postData: post, ownerInfo: owner });
   } catch (err) {
     res.status(500).json("Error occurred while processing! Please try again!");
