@@ -71,7 +71,8 @@
     margin: .15rem;
     transition: 100ms;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 1rem;
+    font-size: 14px;
+    font-weight: 540;
     transition: 300ms;
 }
 

@@ -77,7 +77,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const DisplayFavourites = () => {
   const user = useSelector((state) => state.user.data);
+
   const [posts, setPosts] = useState([]);
+  const [allPostsData, setAllPostsData] = useState([]);
 
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -110,14 +112,39 @@ const DisplayFavourites = () => {
         authorization: "Bearer " + localStorage.getItem("token"),
       },
     }).then(({ data, error }) => {
-      if (data) setPosts(data);
-      else {
+      if (data) {
+        setAllPostsData(data);
+        setPosts(data);
+      } else {
         setIsError(true);
         setAlertMessage(error);
         setResponse(true);
       }
     });
-  }, [fetchFavoritePostsFunction, fetchTagsFunction]);
+  }, [fetchFavoritePostsFunction, fetchTagsFunction, user]);
+
+  useEffect(() => {
+    setPosts([]);
+
+    if (selectedTags !== [])
+      setPosts(() =>
+        allPostsData.filter(({ postData }) =>
+          selectedTags.every((tag) => postData.tags.includes(tag))
+        )
+      );
+
+    if (searchField !== "")
+      setPosts((state) =>
+        state.filter(
+          ({ postData, ownerInfo }) =>
+            postData?.title.toLowerCase().includes(searchField.toLowerCase()) ||
+            ownerInfo?.name.includes(searchField.toLowerCase()) ||
+            postData?.description
+              .toLowerCase()
+              .includes(searchField.toLowerCase())
+        )
+      );
+  }, [selectedTags, allPostsData, searchField]);
   return (
     <div className="display-favourites-page-outer">
       <Backdrop
@@ -259,7 +286,6 @@ const DisplayFavourites = () => {
                                   "Bearer " + localStorage.getItem("token"),
                               },
                             }).then(({ data, error }) => {
-                              console.log(error);
                               if (data) {
                                 setIsError(false);
                                 setAlertMessage("Post removed from Starred");

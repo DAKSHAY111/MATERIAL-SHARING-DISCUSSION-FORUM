@@ -12,7 +12,11 @@ import {
   Alert,
   Backdrop,
   CardActions,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Snackbar,
 } from "@mui/material";
 
@@ -97,6 +101,8 @@ const HomePage = () => {
 
   const [searchField, setSearchField] = useState("");
 
+  const [sortCriteria, setSortCriteria] = useState("most_recent");
+
   const [fetchTagsFunction] = useFetchTagsMutation();
   const [fetchAllPostsFunction] = useFetchAllPostsMutation();
   const [addPostToFavouriteFunction] = useAddPostToFavouritesMutation();
@@ -146,7 +152,17 @@ const HomePage = () => {
               .includes(searchField.toLowerCase())
         )
       );
-  }, [selectedTags, allPostsData, searchField]);
+
+    switch(sortCriteria){
+      case "most_votes":
+        setPosts((state) => state.sort((a, b) => b.postData.upVotes.length - a.postData.upVotes.length));
+        break;
+      
+        default:
+          setPosts((state) => state);
+          break;
+    }
+  }, [selectedTags, allPostsData, searchField, sortCriteria]);
 
   return (
     <div className="home-page-outer">
@@ -231,7 +247,7 @@ const HomePage = () => {
                   />
                 </BootstrapTooltip>
               </div>
-              <div className="search-by-tags-wrapper .tags_scrollbar">
+              <div className="search-by-tags-wrapper">
                 {tags?.map((tag, idx) => (
                   <div
                     className={`tag-representation ${
@@ -253,6 +269,22 @@ const HomePage = () => {
                   </div>
                 ))}
               </div>
+            </div>
+            <div className="search-by-votes">
+              <FormControl fullWidth>
+                <InputLabel id="sort-posts-by-dropdown">Sort By</InputLabel>
+                <Select
+                  labelId="sort-posts-by-dropdown"
+                  fullWidth
+                  className="custom_dropdown"
+                  label="Sort by"
+                  value={sortCriteria}
+                  onChange={(e) => setSortCriteria(e.target.value)}
+                >
+                  <MenuItem value="most_recent">Most Recent</MenuItem>
+                  <MenuItem value="most_votes">Most Votes</MenuItem>
+                </Select>
+              </FormControl>
             </div>
           </div>
         </div>
@@ -315,7 +347,6 @@ const HomePage = () => {
                                     "Bearer " + localStorage.getItem("token"),
                                 },
                               }).then(({ data, error }) => {
-                                console.log(error);
                                 if (data) {
                                   setIsError(false);
                                   setAlertMessage("Post removed from Starred");
