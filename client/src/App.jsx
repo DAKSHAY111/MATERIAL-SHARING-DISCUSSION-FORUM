@@ -17,6 +17,7 @@ import Sidebar from "./components/Sidebar";
 import "./App.css";
 import DisplayProfile from "./components/DisplayProfile";
 import DisplayFavourites from "./components/DisplayFavourites";
+import Discuss from "./pages/Discuss";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -43,6 +44,8 @@ function App() {
 
           {user && <Route path="/starred" element={<DisplayFavourites />} />}
           {!user && <Route path="/account" element={<Login />} />}
+
+          {user && <Route path="/discuss" element={<Discuss />} />}
 
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/new/password" element={<ResetPassword />} />

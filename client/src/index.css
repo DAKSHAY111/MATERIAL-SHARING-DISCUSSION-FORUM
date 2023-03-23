@@ -36,6 +36,10 @@ code {
   margin-right: 1rem !important;
 }
 
+.width_100{
+  width: 100% !important;
+}
+
 ::-webkit-scrollbar{
   display: none;
 }

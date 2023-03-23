@@ -116,6 +116,22 @@ const appApi = createApi({
       }),
     }),
 
+    fetchAllDoubts: builder.mutation({
+      query: () => ({
+        url: "/doubts/fetch/all",
+        method: "get",
+      }),
+    }),
+
+    createDoubt: builder.mutation({
+      query: (data) => ({
+        url: "/doubts/create",
+        method: "post",
+        body: data,
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
+      }),
+    }),
+
   }),
 });
 
@@ -133,5 +149,7 @@ export const {
   useFetchStarredMutation,
   useAddVoteMutation,
   useFetchUserDataMutation,
+  useFetchAllDoubtsMutation,
+  useCreateDoubtMutation,
 } = appApi;
 export default appApi;

@@ -32,6 +32,13 @@
     height: 2.7rem !important;
 }
 
+.company-title{
+    display: flex;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: xx-large;
+    color: #1772cd;
+}
+
 .page-title{
     font-size: xx-large;
 }

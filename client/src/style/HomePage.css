@@ -98,8 +98,10 @@
 
 .post-previewing-icon{
     display: flex;
-    min-width: 360px !important;
-    min-height: 120px !important;
+    justify-self: center;
+    align-self: center;
+    width: 360px !important;
+    height: 120px !important;
     cursor: pointer;
     transition: 600ms ease !important;
 }
@@ -113,7 +115,18 @@
 .post-description{
     font-family: Verdana, Geneva, Tahoma, sans-serif !important;
     font-size: medium !important;
+    max-width: 360px !important;
     margin: .3rem .5rem !important;
+}
+
+.view_more_and_less_btn{
+    cursor: pointer;
+    color: #1772cf;
+    font-size: smaller !important;
+}
+
+.view_more_and_less_btn:hover{
+    text-decoration: underline;
 }
 
 .post-header{
@@ -135,11 +148,13 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    width: 360px !important;
 }
 
 .tags-wrapper{
     display: flex;
+    /* width: inherit !important; */
     flex-wrap: wrap;
 }
 

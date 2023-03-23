@@ -11,6 +11,7 @@ import CloseRounded from "@mui/icons-material/CloseRounded";
 import {
   Alert,
   Backdrop,
+  Button,
   CardActions,
   FormControl,
   IconButton,
@@ -100,8 +101,8 @@ const HomePage = () => {
   const [alertMessage, setAlertMessage] = useState("");
 
   const [searchField, setSearchField] = useState("");
-
   const [sortCriteria, setSortCriteria] = useState("most_recent");
+  const [fullDescriptionPost, setFullDescriptionPost] = useState(null);
 
   const [fetchTagsFunction] = useFetchTagsMutation();
   const [fetchAllPostsFunction] = useFetchAllPostsMutation();
@@ -157,7 +158,10 @@ const HomePage = () => {
       case "most_votes":
         setPosts((state) =>
           state.sort(
-            (a, b) => (b.postData.upVotes.length - b.postData.downVotes.length) - (a.postData.upVotes.length - a.postData.downVotes.length)
+            (a, b) =>
+              b.postData.upVotes.length -
+              b.postData.downVotes.length -
+              (a.postData.upVotes.length - a.postData.downVotes.length)
           )
         );
         break;
@@ -315,11 +319,12 @@ const HomePage = () => {
                       />
                     }
                     action={
-                      !user || user?.favourites?.indexOf(postData._id) === -1 ? (
+                      !user ||
+                      user?.favourites?.indexOf(postData._id) === -1 ? (
                         <BootstrapTooltip title="Add to Starred">
                           <IconButton
                             onClick={async () => {
-                              if(!user){
+                              if (!user) {
                                 setIsError(true);
                                 setAlertMessage("Please Log in to continue");
                                 setResponse(true);
@@ -350,7 +355,7 @@ const HomePage = () => {
                         <BootstrapTooltip title="Remove from Starred">
                           <IconButton
                             onClick={() => {
-                              if(!user){
+                              if (!user) {
                                 setIsError(true);
                                 setAlertMessage("Please Log in to continue...");
                                 setResponse(true);
@@ -405,7 +410,34 @@ const HomePage = () => {
                       className="post-description"
                       component="p"
                     >
-                      {postData.description}
+                      {postData.description.substr(
+                        0,
+                        fullDescriptionPost?._id === postData?._id
+                          ? postData.description.length
+                          : (postData?.description?.length > 40 ? 28 : 40)
+                      )}{" "}
+                      {postData?._id !== fullDescriptionPost?._id &&
+                      postData.description.length > 40 ? (
+                        <Button
+                          className="view_more_and_less_btn"
+                          onClick={() => setFullDescriptionPost(postData)}
+                        >
+                          view more...
+                        </Button>
+                      ) : (
+                        ""
+                      )}
+                      {postData?._id === fullDescriptionPost?._id &&
+                      postData.description.length > 40 ? (
+                        <Button
+                          className="view_more_and_less_btn"
+                          onClick={() => setFullDescriptionPost(null)}
+                        >
+                          view less...
+                        </Button>
+                      ) : (
+                        ""
+                      )}
                     </Typography>
 
                     <div className="tag_and_action_outer">
@@ -430,7 +462,7 @@ const HomePage = () => {
                         <div className="action-outer">
                           <IconButton
                             onClick={() => {
-                              if(!user){
+                              if (!user) {
                                 setIsError(true);
                                 setAlertMessage("Please Log in to continue");
                                 setResponse(true);
@@ -489,7 +521,7 @@ const HomePage = () => {
 
                         <IconButton
                           onClick={() => {
-                            if(!user){
+                            if (!user) {
                               setIsError(true);
                               setAlertMessage("Please Log in to continue");
                               setResponse(true);

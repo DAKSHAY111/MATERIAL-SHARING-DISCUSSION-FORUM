@@ -3,7 +3,7 @@ import { Button, Checkbox, TextField, Backdrop, CircularProgress } from "@mui/ma
 import { Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSignUpUserMutation } from "../services/appApi";
-import google from "../static/google.png";
+// import google from "../static/google.png";
 import "../style/Signup.css";
 
 const Signup = () => {
@@ -78,8 +78,11 @@ const Signup = () => {
       </Backdrop>
       <div className="signup-wrapper">
         <div className="flex-center-wrapper row-gap-2">
-          <div className="company-title">
+          {/* <div className="company-title">
             <img id="company-logo" src={google} alt="GoogleLogo" />
+          </div> */}
+          <div className="company-title">
+            CodeStudy
           </div>
           <div className="page-title">Create Account</div>
           <div className="signup-form">

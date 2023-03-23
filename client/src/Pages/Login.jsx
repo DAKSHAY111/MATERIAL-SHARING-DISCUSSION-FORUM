@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "../services/appApi";
 
-import google from "../static/google.png";
+// import google from "../static/google.png";
 
 import "../style/Signup.css";
 
@@ -75,8 +75,11 @@ const Login = () => {
       </Backdrop>
       <div className="signup-wrapper">
         <div className="flex-center-wrapper row-gap-2">
-          <div className="company-title">
+          {/* <div className="company-title">
             <img id="company-logo" src={google} alt="GoogleLogo" />
+          </div> */}
+          <div className="company-title">
+            CodeStudy
           </div>
           <div className="page-title">Sign in</div>
           <div className="signup-form">

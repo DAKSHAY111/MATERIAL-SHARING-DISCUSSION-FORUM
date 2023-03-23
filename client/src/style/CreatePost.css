@@ -92,6 +92,10 @@
 }
 
 .input-label{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     color: #1772cd;
     cursor: pointer;
     padding: .7rem;

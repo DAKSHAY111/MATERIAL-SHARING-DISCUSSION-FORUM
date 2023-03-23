@@ -1,11 +1,11 @@
 import { Button, Chip } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import { useFetchPostWithOptionsMutation, useFetchUserDataMutation } from "../services/appApi";
 import ListAltRoundedIcon from "@mui/icons-material/ListAltRounded";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
-import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import { useFetchPostWithOptionsMutation, useFetchUserDataMutation } from "../services/appApi";
 
 import "../style/DisplayProfile.css";
 import { useNavigate } from "react-router-dom";
@@ -68,10 +68,10 @@ const DisplayProfile = () => {
               Community Stats
             </div>
             <div className="stats-info">
-              <Chip className="stats-chip" label={`${user?.materialCount} Material Posted`} />
-              <Chip className="stats-chip" label={`Doubts Posted`} />
-              <Chip className="stats-chip" label={`Replied to Doubts`} />
-              <Chip className="stats-chip" label={`${user?.reputation} Reputation Earned`} />
+              <Chip className="stats-chip" label={`${user?.materialCount} Material Uploaded`} />
+              <Chip className="stats-chip" label={`${user?.doubtsCount} Doubts Posted`} />
+              <Chip className="stats-chip" label={`${user?.repliesCount} Replied to Doubts`} />
+              <Chip className="stats-chip" label={`${(user?.reputation > 0 ? '+' : "") +  user?.reputation} Reputation Earned`} />
             </div>
           </div>
         </div>

@@ -54,6 +54,12 @@
     width: 100% !important;
 }
 
+.community-stats{
+    display: flex;
+    flex-direction: column;
+    margin: .3rem;
+}
+
 .community-stats .title{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: large;
@@ -65,6 +71,8 @@
     display: flex;
     flex-direction: column;
     row-gap: .3rem;
+    margin: .2rem;
+    margin-top: 1rem;
 }
 
 .stats-chip{
@@ -72,6 +80,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     font-size: small;
     font-weight: 550;
+    background-color: #1773cf23 !important;
 }
 
 #user-profile-picture{
@@ -112,7 +121,8 @@
 }
 
 .custom_btn:hover, .active, .options_outer:nth-child(odd){
-    background: #1d82e71b !important;
+    /* background: #1d82e71b !important; */
+    background-color: #1773cf23 !important;
 }
 
 .lower_insider{
@@ -130,7 +140,8 @@
     cursor: pointer;
     padding: .5rem 1.2rem;
     border-radius: .3rem;
-    color: #1772cf;
+    /* color: #1772cf; */
+    color: black;
 }
 
 .post_title, .posted_time{

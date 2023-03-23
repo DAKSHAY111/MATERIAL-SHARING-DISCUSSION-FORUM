@@ -191,7 +191,7 @@ exports.login = catchAsync(async (req, res) => {
 });
 
 exports.logout = catchAsync(async (req, res) => {
-  return res.status(201).json(null);
+  return res.status(200).json(null);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {

@@ -5,13 +5,13 @@ const doubtSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "User",
     },
-    doubt: {
+    doubtTitle: {
         type: String,
         required: [true, "Doubt cannot be empty"],
     },
     media: {
-        type: String,
-        trim: true,
+        type: Array,
+        default: [],
     },
     description: {
         type: String,
@@ -29,6 +29,18 @@ const doubtSchema = new mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
+    upVotes: {
+        type: Number,
+        default: 0,
+    },
+    downVotes: {
+        type: Number,
+        default: 0,
+    },
+    creator: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+    }
 });
 
 const Doubt = mongoose.model("Doubt", doubtSchema);
