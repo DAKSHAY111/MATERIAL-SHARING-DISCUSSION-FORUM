@@ -157,6 +157,12 @@ const DisplayFavourites = () => {
       );
 
     switch (sortCriteria) {
+      case "most_recent":
+        setPosts((state) =>
+          state.sort((a, b) => b.postData.createdAt - a.postData.createdAt)
+        );
+        break;
+
       case "most_votes":
         setPosts((state) =>
           state.sort(
@@ -362,7 +368,7 @@ const DisplayFavourites = () => {
                   )}
 
                   <CardContent>
-                  <Typography
+                    <Typography
                       variant="body1"
                       className="post-description"
                       component="p"
@@ -400,7 +406,7 @@ const DisplayFavourites = () => {
                     </Typography>
 
                     <div className="tag_and_action_outer">
-                      <div className="tags-wrapper">
+                      <InputLabel className="tags-wrapper">
                         {postData.tags.map((tag) => (
                           <Chip
                             onClick={() => {
@@ -418,7 +424,7 @@ const DisplayFavourites = () => {
                             label={tag}
                           />
                         ))}
-                      </div>
+                      </InputLabel>
                       <CardActions disableSpacing>
                         <div className="action-outer">
                           <IconButton

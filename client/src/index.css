@@ -40,6 +40,24 @@ code {
   width: 100% !important;
 }
 
+.black{
+  color: black !important;
+}
+
+.black_dull{
+  color: rgba(0, 0, 0, 0.534) !important;
+  transition: 400ms !important;
+}
+
+.black_dull:hover{
+  transition: 400ms !important;
+  color: black !important;
+}
+
+.m-0{
+  margin: 0 !important;
+}
+
 ::-webkit-scrollbar{
   display: none;
 }

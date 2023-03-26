@@ -12,6 +12,7 @@ import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 
 import "../style/DisplayProfile.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import VisibilityRounded from "@mui/icons-material/VisibilityRounded";
 
 const DisplayProfile = () => {
   const user = useSelector((state) => state?.user?.data);
@@ -32,8 +33,12 @@ const DisplayProfile = () => {
   const [fetchUserDataFunction] = useFetchUserDataMutation();
 
   useEffect(() => {
+    let requestedUser = searchParams.get("user");
+    if(!requestedUser && user)
+      requestedUser = user?.name;
+
     fetchUserDataFunction({
-      name: searchParams.get("user"),
+      name: requestedUser,
       headers: { authorization: "Bearer " + userToken },
     }).then(({ data, error }) => {
       if (data) setQueriedUser(data);
@@ -43,23 +48,27 @@ const DisplayProfile = () => {
         setResponse(true);
       }
     });
-  }, [fetchUserDataFunction, searchParams, userToken]);
+  }, [fetchUserDataFunction, searchParams, userToken, user]);
 
   useEffect(() => {
+    let requestedUser = searchParams.get("user");
+    if(!requestedUser && user)
+      requestedUser = user?.name;
+    
     fetchPostWithOptionsFunction({
       options,
-      name: searchParams.get("user"),
+      name: requestedUser,
       headers: { authorization: "Bearer " + userToken },
     }).then(({ data, error }) => {
       if (error) {
         setIsError(true);
-        setAlertMessage("Unable to fetch posts! Please try again!");
+        setAlertMessage(error?.data);
         setResponse(true);
       } else {
         setOptionResult(data);
       }
     });
-  }, [options, fetchPostWithOptionsFunction, searchParams, userToken]);
+  }, [options, fetchPostWithOptionsFunction, searchParams, userToken, user]);
 
   return (
     <>
@@ -116,8 +125,12 @@ const DisplayProfile = () => {
                 <div className="title">Technical Skills</div>
                 <div className="skill_previewer width_100">
                   {!!queriedUser?.technicalSkills?.length &&
-                    queriedUser?.technicalSkills?.map((skill) => (
-                      <Chip className="home-post-tags active" label={skill} />
+                    queriedUser?.technicalSkills?.map((skill, idx) => (
+                      <Chip
+                        key={idx}
+                        className="home-post-tags active"
+                        label={skill}
+                      />
                     ))}
                 </div>
               </div>
@@ -241,46 +254,66 @@ const DisplayProfile = () => {
               ) : options === "recent_doubts" ? (
                 <div className="lower_insider">
                   {optionsResult?.map((element, idx) => (
-                    <div className="options_outer" key={idx}>
+                    <div className="options_outer" onClick={() => navigate(`/doubt?id=${element?._id}&src=${window.location.pathname}`)} key={idx}>
                       <div className="post_title">{element?.doubtTitle}</div>
-                      {Math.floor(
-                        Math.abs(Date.now() - Date.parse(element.createdAt)) /
-                          (1000 * 60)
-                      ) < 60 ? (
-                        <div className="posted_time">{`${Math.floor(
+
+                      <div className="doubt_statistics">
+                        <Button disabled startIcon={<VisibilityRounded />} className="doubt_views black">{`${element?.views} views`}</Button>
+                        {Math.floor(
                           Math.abs(Date.now() - Date.parse(element.createdAt)) /
                             (1000 * 60)
-                        )} minutes ago`}</div>
-                      ) : Math.floor(
-                          Math.abs(Date.now() - Date.parse(element.createdAt)) /
-                            (1000 * 60 * 60)
-                        ) < 24 ? (
-                        <div className="posted_time">{`${Math.floor(
-                          Math.abs(Date.now() - Date.parse(element.createdAt)) /
-                            (1000 * 60 * 60)
-                        )} Hours ago`}</div>
-                      ) : Math.floor(
-                          Math.abs(Date.now() - Date.parse(element.createdAt)) /
-                            (1000 * 60 * 60 * 24)
-                        ) < 30 ? (
-                        <div className="posted_time">{`${Math.floor(
-                          Math.abs(Date.now() - Date.parse(element.createdAt)) /
-                            (1000 * 60 * 60 * 24)
-                        )} Days ago`}</div>
-                      ) : Math.floor(
-                          Math.abs(Date.now() - Date.parse(element.createdAt)) /
-                            (1000 * 60 * 60 * 24 * 30)
-                        ) < 12 ? (
-                        <div className="posted_time">{`${Math.floor(
-                          Math.abs(Date.now() - Date.parse(element.createdAt)) /
-                            (1000 * 60 * 60 * 24 * 30)
-                        )} Months ago`}</div>
-                      ) : (
-                        <div className="posted_time">{`${Math.floor(
-                          Math.abs(Date.now() - Date.parse(element.createdAt)) /
-                            (1000 * 60 * 60 * 24 * 30 * 12)
-                        )} Years ago`}</div>
-                      )}
+                        ) < 60 ? (
+                          <div className="posted_time">{`${Math.floor(
+                            Math.abs(
+                              Date.now() - Date.parse(element.createdAt)
+                            ) /
+                              (1000 * 60)
+                          )} minutes ago`}</div>
+                        ) : Math.floor(
+                            Math.abs(
+                              Date.now() - Date.parse(element.createdAt)
+                            ) /
+                              (1000 * 60 * 60)
+                          ) < 24 ? (
+                          <div className="posted_time">{`${Math.floor(
+                            Math.abs(
+                              Date.now() - Date.parse(element.createdAt)
+                            ) /
+                              (1000 * 60 * 60)
+                          )} Hours ago`}</div>
+                        ) : Math.floor(
+                            Math.abs(
+                              Date.now() - Date.parse(element.createdAt)
+                            ) /
+                              (1000 * 60 * 60 * 24)
+                          ) < 30 ? (
+                          <div className="posted_time">{`${Math.floor(
+                            Math.abs(
+                              Date.now() - Date.parse(element.createdAt)
+                            ) /
+                              (1000 * 60 * 60 * 24)
+                          )} Days ago`}</div>
+                        ) : Math.floor(
+                            Math.abs(
+                              Date.now() - Date.parse(element.createdAt)
+                            ) /
+                              (1000 * 60 * 60 * 24 * 30)
+                          ) < 12 ? (
+                          <div className="posted_time">{`${Math.floor(
+                            Math.abs(
+                              Date.now() - Date.parse(element.createdAt)
+                            ) /
+                              (1000 * 60 * 60 * 24 * 30)
+                          )} Months ago`}</div>
+                        ) : (
+                          <div className="posted_time">{`${Math.floor(
+                            Math.abs(
+                              Date.now() - Date.parse(element.createdAt)
+                            ) /
+                              (1000 * 60 * 60 * 24 * 30 * 12)
+                          )} Years ago`}</div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

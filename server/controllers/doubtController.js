@@ -14,7 +14,11 @@ exports.createDoubt = catchAsync(async (req, res) => {
       createdAt: Date.now(),
       media: media,
     });
-    delete newDoubt._id;
+
+    const owner = await User.findById(user._id);
+    owner.doubtsCount += 1;
+    await owner.save();
+
     res.status(201).json(newDoubt);
   } catch (err) {
     res.status(500).json("Couldn't create doubt!! Please try again!");
@@ -47,10 +51,10 @@ exports.addReply = catchAsync(async (req, res) => {
 
 
 exports.vote = catchAsync(async (req, res) => {
-  const { doubt, user, type } = req.body;
+  const { doubtData, user, type } = req.body;
 
   try {
-    const doubt = await doubt.findById(doubtData._id);
+    const doubt = await Doubt.findById(doubtData._id);
     const owner = await User.findById(doubt.creator);
 
     if (type === "up") {
@@ -96,5 +100,20 @@ exports.fetchAll = catchAsync(async (req, res) => {
     res.status(200).json(response);
   } catch (err) {
     res.status(500).json("Error occurred while processing! Please try again!");
+  }
+});
+
+exports.fetchSingleDoubt = catchAsync(async (req, res) => {
+  const { id } = req.body;
+  try{
+    const doubt = await Doubt.findById(id);
+    doubt.views += 1;
+
+    doubt.save();
+
+    const owner = await User.findById(doubt.creator);
+    res.status(200).json({ doubtData: doubt, ownerInfo: owner });
+  }catch(err){
+    req.status(500).json("Internal server error! Please try again!");
   }
 });

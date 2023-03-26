@@ -357,6 +357,7 @@ exports.favourites = catchAsync(async (req, res) => {
     const owner = await User.findById(post.creator);
     response.push({ postData: post, ownerInfo: owner });
   }
+  response.sort((a, b) => b.postData.createdAt - a.postData.createdAt);
   res.status(200).json(response);
 });
 

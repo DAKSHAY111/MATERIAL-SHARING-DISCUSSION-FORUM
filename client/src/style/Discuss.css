@@ -181,6 +181,8 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: large;
     font-weight: 500;
+    width: fit-content !important;
+    overflow-x: hidden;
 }
 
 .doubt-post-tags{

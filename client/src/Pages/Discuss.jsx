@@ -6,9 +6,10 @@ import {
   CircularProgress,
   Dialog,
   IconButton,
+  InputLabel,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   useFetchAllDoubtsMutation,
   useFetchTagsMutation,
@@ -34,24 +35,9 @@ import PictureAsPdfRounded from "@mui/icons-material/PictureAsPdfRounded";
 import ImageRounded from "@mui/icons-material/ImageRounded";
 import { BootstrapTooltip } from "../components/Navbar";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import VisibilityRounded from "@mui/icons-material/VisibilityRounded";
 // import parse from "html-react-parser";
-
-const descriptionConfig = {
-  readonly: false,
-  placeholder: "Enter your description here...",
-  buttons: [
-    "bold",
-    "italic",
-    "ul",
-    "ol",
-    "underline",
-    "font",
-    "fontsize",
-    "brush",
-    "redo",
-    "undo",
-  ],
-};
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -80,6 +66,30 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Discuss = () => {
   const userToken = useSelector((state) => state?.user?.token);
 
+  const descriptionConfig = useMemo(
+    () => ({
+      readonly: false,
+      placeholder: "Enter your description here...",
+      buttons: [
+        "bold",
+        "italic",
+        "ul",
+        "ol",
+        "underline",
+        "font",
+        "link",
+        "unlink",
+        "align",
+        "image",
+        "fontsize",
+        "brush",
+        "redo",
+        "undo",
+      ],
+    }),
+    []
+  );
+
   const [doubts, setDoubts] = useState([]);
   const [allDoubts, setAllDoubts] = useState([]);
   const [searchField, setSearchField] = useState("");
@@ -105,6 +115,8 @@ const Discuss = () => {
   const [fetchAllDoubtsFunction] = useFetchAllDoubtsMutation();
   const [fetchTagsFunction] = useFetchTagsMutation();
   const [createDoubtFunction] = useCreateDoubtMutation();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAllDoubtsFunction().then(({ data, error }) => {
@@ -137,7 +149,13 @@ const Discuss = () => {
       )
     );
 
-    setDoubts((state) => state.filter((doubt) => doubt?.doubtDetails?.doubtTitle?.includes(searchField)));
+    setDoubts((state) =>
+      state.filter(
+        (doubt) =>
+          doubt?.doubtDetails?.doubtTitle?.includes(searchField) ||
+          doubt?.ownerInfo?.name?.includes(searchField)
+      )
+    );
   }, [selectedTags, allDoubts, searchField]);
 
   const handleSubmit = async () => {
@@ -238,6 +256,7 @@ const Discuss = () => {
         </Backdrop>
         <SnackbarProvider maxSnack={3}></SnackbarProvider>
         <Dialog
+          disableEnforceFocus
           fullScreen
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={openPostDialog}
@@ -262,6 +281,13 @@ const Discuss = () => {
                 <div className="btn-group">
                   <Button
                     onClick={() => {
+                      setDoubts((state) =>
+                        state?.sort(
+                          (a, b) =>
+                            Date.parse(b?.doubtDetails?.createdAt) -
+                            Date.parse(a?.doubtDetails?.createdAt)
+                        )
+                      );
                       setCriteria("newest_to_oldest");
                       setOpenPostDialog(false);
                     }}
@@ -312,7 +338,6 @@ const Discuss = () => {
                 <JoditEditor
                   config={descriptionConfig}
                   ref={descriptionEditor}
-                  value={newDescription}
                   onChange={(e) => setNewDescription(e)}
                   className="custom-post-input-field"
                 />
@@ -411,6 +436,13 @@ const Discuss = () => {
                 <div className="filter-buttons">
                   <Button
                     onClick={() => {
+                      setDoubts((state) =>
+                        state?.sort(
+                          (a, b) =>
+                            Date.parse(b?.doubtDetails?.createdAt) -
+                            Date.parse(a?.doubtDetails?.createdAt)
+                        )
+                      );
                       setCriteria("newest_to_oldest");
                     }}
                     className={`custom_filter_btn ${
@@ -423,6 +455,13 @@ const Discuss = () => {
                   </Button>
                   <Button
                     onClick={() => {
+                      setDoubts((state) =>
+                        state?.sort(
+                          (a, b) =>
+                            b?.doubtDetails?.upVotes?.length -
+                            a?.doubtDetails?.upVotes?.length
+                        )
+                      );
                       setCriteria("most_votes");
                     }}
                     startIcon={<WhatshotRoundedIcon />}
@@ -481,36 +520,47 @@ const Discuss = () => {
                         </div>
                         <div className="doubt-info">
                           <div className="doubt-title-and-tags-info">
-                            <div className="doubt-title">
-                              {doubtDetails?.doubtTitle}
+                            <div
+                              onClick={() =>
+                                navigate(`/doubt?id=${doubtDetails._id}`)
+                              }
+                              className="doubt-title"
+                            >
+                              {doubtDetails?.doubtTitle
+                                ?.split(" ")
+                                ?.map((word, idx) => {
+                                  if (idx < 3) return word + " ";
+                                  else if (idx === 3) return word + "...";
+                                  return "";
+                                })}
                             </div>
-                            <div className="doubts-tags">
-                              {doubtDetails?.tags?.map(
-                                (tag, idx) =>
-                                  idx < 4 && (
-                                    <Chip
-                                      key={idx}
-                                      onClick={() => {
-                                        if (selectedTags.indexOf(tag) === -1)
-                                          setSelectedTags((state) => [
-                                            ...state,
-                                            tag,
-                                          ]);
-                                        else
-                                          setSelectedTags((state) =>
-                                            state.filter((all) => all !== tag)
-                                          );
-                                      }}
-                                      className={`home-post-tags ${
-                                        selectedTags.indexOf(tag) !== -1
-                                          ? "active"
-                                          : ""
-                                      }`}
-                                      label={tag}
-                                    />
-                                  )
-                              )}
-                            </div>
+                            <InputLabel
+                              className="doubts-tags"
+                              style={{ width: "250px", overflowX: "hidden" }}
+                            >
+                              {doubtDetails?.tags?.map((tag, idx) => (
+                                <Chip
+                                  key={idx}
+                                  onClick={() => {
+                                    if (selectedTags.indexOf(tag) === -1)
+                                      setSelectedTags((state) => [
+                                        ...state,
+                                        tag,
+                                      ]);
+                                    else
+                                      setSelectedTags((state) =>
+                                        state.filter((all) => all !== tag)
+                                      );
+                                  }}
+                                  className={`home-post-tags ${
+                                    selectedTags.indexOf(tag) !== -1
+                                      ? "active"
+                                      : ""
+                                  }`}
+                                  label={tag}
+                                />
+                              ))}
+                            </InputLabel>
                           </div>
                           <div className="doubt-info">
                             <div className="user-info">
@@ -527,8 +577,12 @@ const Discuss = () => {
                       </div>
                       <div className="static-info">
                         <div className="info-outer">
+                          <VisibilityRounded />
+                          {doubtDetails?.views}
+                        </div>
+                        <div className="info-outer">
                           <ArrowDropUpSharpIcon />
-                          {doubtDetails?.upVotes}
+                          {doubtDetails?.upVotes?.length}
                         </div>
                       </div>
                     </div>

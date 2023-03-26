@@ -17,7 +17,6 @@ exports.createPost = catchAsync(async (req, res) => {
     user.materialCount += 1;
     await user.save();
 
-    delete newPost._id;
     res.status(201).json(newPost);
   } catch (err) {
     res.status(500).json("Couldn't create post!! Please try again!");
@@ -43,14 +42,19 @@ exports.fetchOptions = catchAsync(async (req, res) => {
   const { options, name } = req.body;
   const requestedUser = await User.findOne({ name: name });
 
+  if(!requestedUser){
+    res.status(404).json("User not found!");
+    return;
+  }
+
   switch (options) {
     case "recent_material":
-      const posts = await Post.find({ creator: requestedUser._id }).limit(10).sort({ createdAt: -1 });
+      const posts = await Post.find({ creator: requestedUser?._id }).limit(10).sort({ createdAt: -1 });
       res.status(200).json(posts);
       break;
 
     case "recent_doubts":
-      const doubts = await Doubt.find({ creator: requestedUser._id }).limit(10).sort({ createdAt: -1 });
+      const doubts = await Doubt.find({ creator: requestedUser?._id }).limit(10).sort({ createdAt: -1 });
       res.status(200).json(doubts);
       break;
 

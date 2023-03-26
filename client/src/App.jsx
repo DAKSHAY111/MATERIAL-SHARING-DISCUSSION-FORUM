@@ -19,6 +19,7 @@ import DisplayProfile from "./components/DisplayProfile";
 import DisplayFavourites from "./components/DisplayFavourites";
 import Discuss from "./pages/Discuss";
 import EditProfile from "./components/EditProfile";
+import DisplayDoubt from "./pages/DisplayDoubt";
 
 function App() {
   const user = useSelector((state) => state?.user);
@@ -49,7 +50,8 @@ function App() {
           {user && <Route path="/edit/profile" element={<EditProfile />} />}
           {!user && <Route path="/edit/profile" element={<Login />} />}
 
-          {<Route path="/discuss" element={<Discuss />} />}
+          <Route path="/discuss" element={<Discuss />} />
+          <Route path="/doubt" element={<DisplayDoubt />} />
 
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/new/password" element={<ResetPassword />} />

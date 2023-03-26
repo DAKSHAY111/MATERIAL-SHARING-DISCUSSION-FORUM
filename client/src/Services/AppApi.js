@@ -133,6 +133,22 @@ const appApi = createApi({
       }),
     }),
 
+    fetchSingleDoubt: builder.mutation({
+      query: (data) => ({
+        url: "/doubts/fetch/doubt",
+        method: "post",
+        body: data,
+      }),
+    }),
+
+    addVoteToDoubt: builder.mutation({
+      query: (data) => ({
+        url: "/doubts/vote",
+        method: "post",
+        body: data,
+      }),
+    }),
+
   }),
 });
 
@@ -153,5 +169,7 @@ export const {
   useFetchAllDoubtsMutation,
   useCreateDoubtMutation,
   useUpdateUserProfileMutation,
+  useFetchSingleDoubtMutation,
+  useAddVoteToDoubtMutation,
 } = appApi;
 export default appApi;

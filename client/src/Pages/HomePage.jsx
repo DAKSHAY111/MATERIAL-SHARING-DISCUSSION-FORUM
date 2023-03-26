@@ -151,7 +151,8 @@ const HomePage = () => {
             ownerInfo?.name.includes(searchField.toLowerCase()) ||
             postData?.description
               .toLowerCase()
-              .includes(searchField.toLowerCase())
+              .includes(searchField.toLowerCase()) ||
+            postData?.tags?.filter((tag) => tag?.includes(searchField)).length
         )
       );
 
@@ -446,7 +447,7 @@ const HomePage = () => {
                     </Typography>
 
                     <div className="tag_and_action_outer">
-                      <div className="tags-wrapper">
+                      <InputLabel className="tags-wrapper">
                         {postData.tags.map((tag) => (
                           <Chip
                             onClick={() => {
@@ -464,7 +465,7 @@ const HomePage = () => {
                             label={tag}
                           />
                         ))}
-                      </div>
+                      </InputLabel>
                       <CardActions disableSpacing>
                         <div className="action-outer">
                           <IconButton
