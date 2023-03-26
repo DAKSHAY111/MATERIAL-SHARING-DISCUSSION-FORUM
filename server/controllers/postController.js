@@ -1,6 +1,7 @@
 const catchAsync = require("./../utils/catchAsync");
 const Post = require("../models/postModel");
 const User = require("../models/userModel");
+const Doubt = require("../models/doubtModel");
 
 exports.createPost = catchAsync(async (req, res) => {
   const { title, description, tags, media, user } = req.body;
@@ -39,15 +40,18 @@ exports.fetchAll = catchAsync(async (req, res) => {
 });
 
 exports.fetchOptions = catchAsync(async (req, res) => {
-  const { options, user } = req.body;
+  const { options, name } = req.body;
+  const requestedUser = await User.findOne({ name: name });
+
   switch (options) {
     case "recent_material":
-      const posts = await Post.find({ creator: user._id }).limit(10).sort({ createdAt: -1 });
+      const posts = await Post.find({ creator: requestedUser._id }).limit(10).sort({ createdAt: -1 });
       res.status(200).json(posts);
       break;
 
     case "recent_doubts":
-      res.status(200).json([]);
+      const doubts = await Doubt.find({ creator: requestedUser._id }).limit(10).sort({ createdAt: -1 });
+      res.status(200).json(doubts);
       break;
 
     case "recent_replies":

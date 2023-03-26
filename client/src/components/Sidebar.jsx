@@ -95,7 +95,8 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Sidebar() {
-  const user = useSelector((state) => state.user?.data);
+  const user = useSelector((state) => state?.user?.data);
+  const userToken = useSelector((state) => state?.user?.token);
   const [open, setOpen] = React.useState(false);
 
   const navigate = useNavigate();
@@ -188,34 +189,34 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
           )}
-          {user && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                onClick={() => navigate("/discuss")}
-                className="customized_blue font_verdana"
-                onMouseEnter={handleOpenEvent}
+
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              onClick={() => navigate("/discuss")}
+              className="customized_blue font_verdana"
+              onMouseEnter={handleOpenEvent}
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <NearMeRounded className="customized_blue font_verdana" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"Discuss"}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          )}
+                <NearMeRounded className="customized_blue font_verdana" />
+              </ListItemIcon>
+              <ListItemText
+                primary={"Discuss"}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
+
           {!user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
@@ -275,7 +276,7 @@ export default function Sidebar() {
           {user && (
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => navigate("/account")}
+                onClick={() => navigate(`/account?user=${user.name}`)}
                 className="customized_blue font_verdana"
                 onMouseEnter={handleOpenEvent}
                 sx={{
@@ -332,7 +333,11 @@ export default function Sidebar() {
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 onClick={() => {
-                  logoutFunction();
+                  logoutFunction({
+                    headers: {
+                      authorization: "Bearer " + userToken
+                    }
+                  });
                   navigate("/login");
                 }}
                 className="customized_blue font_verdana"

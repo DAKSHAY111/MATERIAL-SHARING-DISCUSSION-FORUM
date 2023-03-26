@@ -11,20 +11,20 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addMatcher(
       AppApi.endpoints.loginUser.matchFulfilled,
-      (currentState, { payload }) => payload
+      (state, { payload }) => payload
     );
     builder.addMatcher(
       AppApi.endpoints.logout.matchFulfilled,
-      (currentState, { payload }) => payload
+      (state, { payload }) => payload
     );
     builder.addMatcher(
       AppApi.endpoints.addPostToFavourites.matchFulfilled,
       (state, {payload}) => payload
     );
     builder.addMatcher(
-      AppApi.endpoints.fetchUserData.matchFulfilled,
+      AppApi.endpoints.updateUserProfile.matchFulfilled,
       (state, { payload }) => payload
-    );
+    )
   },
 });
 

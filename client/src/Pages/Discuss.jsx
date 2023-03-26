@@ -1,5 +1,4 @@
 import {
-  Alert,
   Avatar,
   Backdrop,
   Button,
@@ -7,7 +6,6 @@ import {
   CircularProgress,
   Dialog,
   IconButton,
-  Snackbar,
   TextField,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
@@ -29,10 +27,13 @@ import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import ArrowDropUpSharpIcon from "@mui/icons-material/ArrowDropUpSharp";
 
+import { enqueueSnackbar, SnackbarProvider } from "notistack";
+
 import JoditEditor from "jodit-react";
 import PictureAsPdfRounded from "@mui/icons-material/PictureAsPdfRounded";
 import ImageRounded from "@mui/icons-material/ImageRounded";
 import { BootstrapTooltip } from "../components/Navbar";
+import { useSelector } from "react-redux";
 // import parse from "html-react-parser";
 
 const descriptionConfig = {
@@ -77,9 +78,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Discuss = () => {
-  const [response, setResponse] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
+  const userToken = useSelector((state) => state?.user?.token);
 
   const [doubts, setDoubts] = useState([]);
   const [allDoubts, setAllDoubts] = useState([]);
@@ -113,18 +112,20 @@ const Discuss = () => {
         setDoubts(data);
         setAllDoubts(data);
       } else {
-        setIsError(true);
-        setAlertMessage(error);
-        setResponse(true);
+        enqueueSnackbar(
+          "Unable to fetch doubts at the moment! Please try again!",
+          { variant: "error", autoHideDuration: 3000 }
+        );
       }
     });
 
     fetchTagsFunction().then(({ data, error }) => {
       if (data) setTags(data);
       else {
-        setIsError(true);
-        setAlertMessage(error);
-        setResponse(true);
+        enqueueSnackbar(
+          "Unable to fetch tags at the moment! Please try again!",
+          { variant: "error", autoHideDuration: 3000 }
+        );
       }
     });
   }, [fetchAllDoubtsFunction, fetchTagsFunction]);
@@ -135,13 +136,16 @@ const Discuss = () => {
         selectedTags?.every((tag) => doubtDetails?.tags?.includes(tag))
       )
     );
-  }, [selectedTags, allDoubts]);
+
+    setDoubts((state) => state.filter((doubt) => doubt?.doubtDetails?.doubtTitle?.includes(searchField)));
+  }, [selectedTags, allDoubts, searchField]);
 
   const handleSubmit = async () => {
     if (doubtTitle === "" || newDescription === "") {
-      setIsError(true);
-      setAlertMessage("Title can not be empty!");
-      setResponse(true);
+      enqueueSnackbar("Title can not be empty!", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
       return;
     }
 
@@ -170,8 +174,10 @@ const Discuss = () => {
           type: file?.type,
         });
       } catch (ex) {
-        setAlertMessage("Error Occurred while posting");
-        setIsError(true);
+        enqueueSnackbar("Error Occurred while uploading files!", {
+          variant: "error",
+          autoHideDuration: 3000,
+        });
         setDisableSubmit(false);
       }
     }
@@ -182,19 +188,21 @@ const Discuss = () => {
       tags: postTags,
       media: fileURLS,
       description: newDescription,
+      headers: { authorization: "Bearer " + userToken },
     }).then(({ data, error }) => {
       if (data) {
-        setIsError(false);
-        setAlertMessage("Doubt posted successfully!");
-        setResponse(true);
+        enqueueSnackbar("Doubt posted successfully!", {
+          autoHideDuration: 3000,
+        });
+        window.location.href = "/discuss";
       } else {
-        setIsError(true);
-        setAlertMessage(error);
-        setResponse(true);
+        enqueueSnackbar(error.data.message, {
+          variant: "error",
+          autoHideDuration: 3000,
+        });
+        setStaus("Post");
+        setDisableSubmit(false);
       }
-      setStaus("Post");
-      setDisableSubmit(false);
-      window.location.href = "/discuss";
     });
   };
 
@@ -228,19 +236,7 @@ const Discuss = () => {
             ""
           )}
         </Backdrop>
-        <Snackbar
-          onClose={() => setResponse(false)}
-          autoHideDuration={2000}
-          open={response}
-        >
-          <Alert
-            variant="filled"
-            severity={`${isError ? "error" : "success"}`}
-            sx={{ width: "100%" }}
-          >
-            {alertMessage}
-          </Alert>
-        </Snackbar>
+        <SnackbarProvider maxSnack={3}></SnackbarProvider>
         <Dialog
           fullScreen
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -334,9 +330,10 @@ const Discuss = () => {
                       e.target.files[0].type !== "image/jpeg" &&
                       e.target.files[0].type !== "application/pdf"
                     ) {
-                      setAlertMessage("File type not supported!");
-                      setIsError(true);
-                      setResponse(true);
+                      enqueueSnackbar("File type not supported!", {
+                        variant: "error",
+                        autoHideDuration: 3000,
+                      });
                       return;
                     }
                     setAttachedFiles((state) => [...state, e.target.files[0]]);
@@ -488,29 +485,31 @@ const Discuss = () => {
                               {doubtDetails?.doubtTitle}
                             </div>
                             <div className="doubts-tags">
-                              {doubtDetails?.tags?.map((tag, idx) => (
-                                idx < 4 &&
-                                <Chip
-                                  key={idx}
-                                  onClick={() => {
-                                    if (selectedTags.indexOf(tag) === -1)
-                                      setSelectedTags((state) => [
-                                        ...state,
-                                        tag,
-                                      ]);
-                                    else
-                                      setSelectedTags((state) =>
-                                        state.filter((all) => all !== tag)
-                                      );
-                                  }}
-                                  className={`home-post-tags ${
-                                    selectedTags.indexOf(tag) !== -1
-                                      ? "active"
-                                      : ""
-                                  }`}
-                                  label={tag}
-                                />
-                              ))}
+                              {doubtDetails?.tags?.map(
+                                (tag, idx) =>
+                                  idx < 4 && (
+                                    <Chip
+                                      key={idx}
+                                      onClick={() => {
+                                        if (selectedTags.indexOf(tag) === -1)
+                                          setSelectedTags((state) => [
+                                            ...state,
+                                            tag,
+                                          ]);
+                                        else
+                                          setSelectedTags((state) =>
+                                            state.filter((all) => all !== tag)
+                                          );
+                                      }}
+                                      className={`home-post-tags ${
+                                        selectedTags.indexOf(tag) !== -1
+                                          ? "active"
+                                          : ""
+                                      }`}
+                                      label={tag}
+                                    />
+                                  )
+                              )}
                             </div>
                           </div>
                           <div className="doubt-info">

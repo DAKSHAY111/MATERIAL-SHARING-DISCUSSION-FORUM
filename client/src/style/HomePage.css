@@ -185,3 +185,7 @@
         min-width: 30% !important;
     }
 }
+
+#post-owner-img{
+    cursor: pointer;
+}

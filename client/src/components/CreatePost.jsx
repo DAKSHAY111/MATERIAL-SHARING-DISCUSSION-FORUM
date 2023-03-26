@@ -26,7 +26,7 @@ import "../style/Signup.css";
 import "../style/CreatePost.css";
 
 const CreatePost = () => {
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state?.user);
 
   const navigate = useNavigate();
 
@@ -91,6 +91,9 @@ const CreatePost = () => {
         description,
         media: urlData,
         user,
+        headers: {
+          authorization: "Bearer " + user?.token
+        }
       }).then(({ data, error }) => {
         setResponse(true);
         if (error) {

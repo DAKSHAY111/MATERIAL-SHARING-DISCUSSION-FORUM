@@ -26,23 +26,10 @@ const createSendToken = (user, statusCode, res, expiryTime) => {
     httpOnly: true,
   };
 
-  const newUserData = new Object({
-    _id: user._id,
-    name: user.name,
-    displayName: user.displayName,
-    photo: user.photo,
-    role: user.role,
-    favourites: user.favourites,
-    materialCount: user.materialCount,
-    doubtsCount: user.doubtsCount,
-    repliesCount: user.repliesCount,
-    reputation: user.reputation,
-  });
-
   res.cookie("jwt", token, cookieOptions);
   res.status(statusCode).json({
     token: token,
-    data: newUserData,
+    data: user,
   });
 };
 
@@ -118,12 +105,10 @@ exports.signup = catchAsync(async (req, res) => {
       });
       res.status(201).json("Verification mail sent successfully!");
     } catch (err) {
-      console.log(err);
       res.status(500).json("Internal Error while sending mail!");
       return;
     }
   } catch (err) {
-    console.log(err);
     if (err.code == 11000) {
       res.status(409).json("User already exists!");
     } else {
@@ -142,7 +127,6 @@ exports.verifyAccount = catchAsync(async (req, res) => {
         response.message = "Verification link is expired!!";
         response.status = 403;
       } else {
-        console.log(data);
         const user = await UnverifiedUser.findOne({ name: data.id });
         if (!user) {
           res.redirect(`http://localhost:3000/response?status=100`);
@@ -235,7 +219,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     });
     res.status(200).json("E-mail sent successfully!!");
   } catch (err) {
-    console.log(err);
     res.status(500).json("Internal Error while sending mail!");
     return;
   }
@@ -275,7 +258,7 @@ exports.myProfile = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  const { headers } = req;
+  const { headers } = req.body;
   let token;
   if (
     headers.authorization &&
@@ -283,7 +266,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = headers.authorization.split(" ")[1];
   }
-  if (!token) {
+  if (!token || token === "undefined" || token === "null") {
     return next(
       new AppError("You are not logged in!! Please log in to get access", 401)
     );
@@ -342,11 +325,34 @@ exports.favourites = catchAsync(async (req, res) => {
 });
 
 exports.fetchData = catchAsync(async (req, res) => {
-  const { user } = req.body;
+  const { name, user } = req.body;
   try{
-    const _user = await User.findById(user._id);
-    createSendToken(_user, 200, res);
+    const _user = await User.findOne({ name: name });
+    res.status(200).json(_user);
   }catch(err){
     res.status(500).json("Error occurred while processing! Please try again!");
+  }
+});
+
+exports.updateProfile = catchAsync(async (req, res) => {
+  const { displayName, password, gender, about, githubLink, linkedInLink, technicalSkills, photo, user } = req.body;
+
+  try{
+    const _user = await User.findById(user._id);
+
+    _user.displayName = displayName;
+    if(password.length >= 8)
+      _user.password = await hashPassword(password);
+    _user.gender = gender;
+    _user.about = about;
+    _user.githubLink = githubLink;
+    _user.linkedInLink = linkedInLink;
+    _user.technicalSkills = technicalSkills;
+    _user.photo = photo;
+    
+    _user.save();
+    createSendToken(_user, 200, res, '9999 years');
+  }catch(err){
+
   }
 });

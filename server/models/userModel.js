@@ -18,6 +18,26 @@ const userSchema = new mongoose.Schema({
     default: "",
   },
 
+  gender: {
+    type: String,
+    default: "male",
+  },
+
+  githubLink: {
+    type: "String",
+    default: "",
+  },
+
+  linkedInLink: {
+    type: String,
+    default: "",
+  },
+
+  technicalSkills: {
+    type: Array,
+    default: [],
+  },
+
   email: {
     type: String,
     required: [true, "user must provide an email"],

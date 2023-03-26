@@ -1,0 +1,77 @@
+.edit_profile_outer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100% !important;
+    min-width: 1440px !important;
+    height: calc(100vh - 60px) !important;
+}
+
+.edit_profile_wrapper{
+    /* display: flex;
+    flex-direction: row; */
+    display: grid;
+    grid-template-columns: 4fr 9fr;
+    width: 100% !important;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.skill_previewer{
+    display: flex;
+    width: 70% !important;
+    flex-wrap: wrap !important;
+    margin: .7rem 0 !important;
+}
+
+.edit_profile_left_sider{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.user_profile_img{
+    display: flex;
+    flex-direction: column;
+}
+
+#user_profile_picture{
+    border-radius: 50% !important;
+    width: 130px !important;
+    height: 130px !important;
+}
+
+.add_photo_icon{
+    cursor: pointer;
+    position: relative;
+    left: 50px !important;
+    bottom: 13px !important;
+    color: #0154a8;
+    z-index: 99;
+}
+
+.editable_fields_outer{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100% !important;
+}
+
+.editable_fields_wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100% !important;
+    justify-content: space-evenly !important;
+    align-items: center !important;
+}
+
+.update_profile_action_btn{
+    margin: .7rem 0 !important;
+}
+
+.update_success{
+    color: rgb(1, 158, 1) !important;
+    background-color: rgba(1, 158, 1, 0.11) !important;
+}

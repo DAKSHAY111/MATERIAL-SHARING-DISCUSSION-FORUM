@@ -86,6 +86,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const HomePage = () => {
   const user = useSelector((state) => state?.user?.data);
+  const userToken = useSelector((state) => state?.user?.token);
 
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -314,6 +315,10 @@ const HomePage = () => {
                           height: "50px",
                           borderRadius: "50%",
                         }}
+                        id="post-owner-img"
+                        onClick={() =>
+                          (window.location.href = `/account?user=${ownerInfo?.name}`)
+                        }
                         src={ownerInfo.photo}
                         alt={`${ownerInfo.name}'s profile`}
                       />
@@ -333,8 +338,7 @@ const HomePage = () => {
                               await addPostToFavouriteFunction({
                                 postData,
                                 headers: {
-                                  authorization:
-                                    "Bearer " + localStorage.getItem("token"),
+                                  authorization: "Bearer " + userToken,
                                 },
                               }).then(({ data, error }) => {
                                 if (data) {
@@ -342,7 +346,7 @@ const HomePage = () => {
                                   setAlertMessage("Post added to Starred");
                                 } else {
                                   setIsError(true);
-                                  setAlertMessage("");
+                                  setAlertMessage(error.data.message);
                                 }
                                 setResponse(true);
                               });
@@ -364,8 +368,7 @@ const HomePage = () => {
                               addPostToFavouriteFunction({
                                 postData,
                                 headers: {
-                                  authorization:
-                                    "Bearer " + localStorage.getItem("token"),
+                                  authorization: "Bearer " + userToken,
                                 },
                               }).then(({ data, error }) => {
                                 if (data) {
@@ -414,7 +417,9 @@ const HomePage = () => {
                         0,
                         fullDescriptionPost?._id === postData?._id
                           ? postData.description.length
-                          : (postData?.description?.length > 40 ? 28 : 40)
+                          : postData?.description?.length > 40
+                          ? 28
+                          : 40
                       )}{" "}
                       {postData?._id !== fullDescriptionPost?._id &&
                       postData.description.length > 40 ? (
@@ -452,7 +457,9 @@ const HomePage = () => {
                                   state.filter((all) => all !== tag)
                                 );
                             }}
-                            className="home-post-tags"
+                            className={`home-post-tags ${
+                              selectedTags?.includes(tag) ? "active" : ""
+                            }`}
                             key={tag}
                             label={tag}
                           />
@@ -472,8 +479,7 @@ const HomePage = () => {
                                 postData,
                                 type: "up",
                                 headers: {
-                                  authorization:
-                                    "Bearer " + localStorage.getItem("token"),
+                                  authorization: "Bearer " + userToken,
                                 },
                               }).then(({ data, error }) => {
                                 if (data) {
@@ -531,8 +537,7 @@ const HomePage = () => {
                               postData,
                               type: "down",
                               headers: {
-                                authorization:
-                                  "Bearer " + localStorage.getItem("token"),
+                                authorization: "Bearer " + userToken,
                               },
                             }).then(({ data, error }) => {
                               if (data) {

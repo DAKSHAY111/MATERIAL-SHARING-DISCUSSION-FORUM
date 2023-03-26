@@ -4,6 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
   Alert,
   Backdrop,
+  Button,
   CardActions,
   FormControl,
   IconButton,
@@ -82,7 +83,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const DisplayFavourites = () => {
-  const user = useSelector((state) => state.user.data);
+  const user = useSelector((state) => state?.user?.data);
+  const userToken = useSelector((state) => state?.user?.token);
 
   const [posts, setPosts] = useState([]);
   const [allPostsData, setAllPostsData] = useState([]);
@@ -104,6 +106,7 @@ const DisplayFavourites = () => {
   const [alertMessage, setAlertMessage] = useState("");
 
   const [sortCriteria, setSortCriteria] = useState("most_recent");
+  const [fullDescriptionPost, setFullDescriptionPost] = useState(null);
 
   useEffect(() => {
     fetchTagsFunction().then(async ({ data, error }) => {
@@ -115,7 +118,11 @@ const DisplayFavourites = () => {
         setTags(data);
       }
     });
-    fetchFavoritePostsFunction().then(({ data, error }) => {
+    fetchFavoritePostsFunction({
+      headers: {
+        authorization: "Bearer " + userToken,
+      },
+    }).then(({ data, error }) => {
       if (data) {
         setAllPostsData(data);
         setPosts(data);
@@ -125,7 +132,7 @@ const DisplayFavourites = () => {
         setResponse(true);
       }
     });
-  }, [fetchFavoritePostsFunction, fetchTagsFunction, user]);
+  }, [fetchFavoritePostsFunction, fetchTagsFunction, user, userToken]);
 
   useEffect(() => {
     setPosts([]);
@@ -315,6 +322,9 @@ const DisplayFavourites = () => {
                           onClick={() => {
                             addPostToFavouriteFunction({
                               postData,
+                              headers: {
+                                authorization: "Bearer " + userToken,
+                              },
                             }).then(({ data, error }) => {
                               if (data) {
                                 setIsError(false);
@@ -352,12 +362,41 @@ const DisplayFavourites = () => {
                   )}
 
                   <CardContent>
-                    <Typography
+                  <Typography
                       variant="body1"
                       className="post-description"
                       component="p"
                     >
-                      {postData.description}
+                      {postData.description.substr(
+                        0,
+                        fullDescriptionPost?._id === postData?._id
+                          ? postData.description.length
+                          : postData?.description?.length > 40
+                          ? 28
+                          : 40
+                      )}{" "}
+                      {postData?._id !== fullDescriptionPost?._id &&
+                      postData.description.length > 40 ? (
+                        <Button
+                          className="view_more_and_less_btn"
+                          onClick={() => setFullDescriptionPost(postData)}
+                        >
+                          view more...
+                        </Button>
+                      ) : (
+                        ""
+                      )}
+                      {postData?._id === fullDescriptionPost?._id &&
+                      postData.description.length > 40 ? (
+                        <Button
+                          className="view_more_and_less_btn"
+                          onClick={() => setFullDescriptionPost(null)}
+                        >
+                          view less...
+                        </Button>
+                      ) : (
+                        ""
+                      )}
                     </Typography>
 
                     <div className="tag_and_action_outer">
@@ -372,7 +411,9 @@ const DisplayFavourites = () => {
                                   state.filter((all) => all !== tag)
                                 );
                             }}
-                            className="home-post-tags"
+                            className={`home-post-tags ${
+                              selectedTags?.includes(tag) ? "active" : ""
+                            }`}
                             key={tag}
                             label={tag}
                           />
@@ -385,10 +426,22 @@ const DisplayFavourites = () => {
                               voteFunction({
                                 postData,
                                 type: "up",
+                                headers: {
+                                  authorization: "Bearer " + userToken,
+                                },
                               }).then(({ data, error }) => {
                                 if (data) {
                                   setPosts((state) =>
                                     state.map((post) => {
+                                      if (
+                                        post.postData._id === data.postData._id
+                                      )
+                                        return data;
+                                      else return post;
+                                    })
+                                  );
+                                  setAllPostsData((state) =>
+                                    state?.map((post) => {
                                       if (
                                         post.postData._id === data.postData._id
                                       )
@@ -424,10 +477,20 @@ const DisplayFavourites = () => {
                             voteFunction({
                               postData,
                               type: "down",
+                              headers: {
+                                authorization: "Bearer " + userToken,
+                              },
                             }).then(({ data, error }) => {
                               if (data) {
                                 setPosts((state) =>
                                   state.map((post) => {
+                                    if (post.postData._id === data.postData._id)
+                                      return data;
+                                    else return post;
+                                  })
+                                );
+                                setAllPostsData((state) =>
+                                  state?.map((post) => {
                                     if (post.postData._id === data.postData._id)
                                       return data;
                                     else return post;
