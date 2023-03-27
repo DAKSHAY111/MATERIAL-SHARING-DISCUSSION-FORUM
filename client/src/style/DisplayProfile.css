@@ -4,7 +4,7 @@
     width: 90% !important;
     position: relative;
     left: 10%;
-    margin-top: 10% !important;
+    margin-top: 7% !important;
     column-gap: 2rem;
 }
 
@@ -170,6 +170,21 @@
     justify-content: space-between;
     align-items: center;
     width: 30% !important;
+}
+
+.user_social_links{
+    display: flex;
+    flex-direction: column;
+    row-gap: .3rem;
+}
+
+.user_social_links_description{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: .3rem;
+    padding: .2rem .7rem;
 }
 
 @media screen and (max-width:880px) {

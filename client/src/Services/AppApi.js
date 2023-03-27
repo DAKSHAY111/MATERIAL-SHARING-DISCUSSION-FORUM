@@ -149,6 +149,30 @@ const appApi = createApi({
       }),
     }),
 
+    addReplyToDoubt: builder.mutation({
+      query: (data) => ({
+        url: "/doubts/create/reply",
+        method: "post",
+        body: data,
+      }),
+    }),
+
+    addVoteToReply: builder.mutation({
+      query: (data) => ({
+        url: "/doubts/vote/reply",
+        method: "post",
+        body: data,
+      }),
+    }),
+
+    sortReplies: builder.mutation({
+      query: (data) => ({
+        url: "/doubts/sort/reply",
+        method: "post",
+        body: data,
+      }),
+    }),
+
   }),
 });
 
@@ -171,5 +195,8 @@ export const {
   useUpdateUserProfileMutation,
   useFetchSingleDoubtMutation,
   useAddVoteToDoubtMutation,
+  useAddReplyToDoubtMutation,
+  useAddVoteToReplyMutation,
+  useSortRepliesMutation,
 } = appApi;
 export default appApi;

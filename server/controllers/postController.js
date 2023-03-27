@@ -2,6 +2,7 @@ const catchAsync = require("./../utils/catchAsync");
 const Post = require("../models/postModel");
 const User = require("../models/userModel");
 const Doubt = require("../models/doubtModel");
+const Reply = require("../models/replyModel");
 
 exports.createPost = catchAsync(async (req, res) => {
   const { title, description, tags, media, user } = req.body;
@@ -59,7 +60,8 @@ exports.fetchOptions = catchAsync(async (req, res) => {
       break;
 
     case "recent_replies":
-      res.status(200).json([]);
+      const replies = await Reply.find({ creator: requestedUser?._id }).limit(10).sort({ createdAt: -1 });
+      res.status(200).json(replies);
       break;
   }
 });

@@ -1,15 +1,21 @@
 .signup-outer{
     display: flex;
-    height: calc(100vh - 60px) !important;
+    /* height: calc(100vh - 60px) !important; */
     justify-content: center;
     align-items: center;
-    margin-top: 60px !important;
-    min-width: 480px;
+    margin-top: 7% !important;
 }
 
 .signup-wrapper{
-    width: 35%;
-    min-width: 360px !important;
+    width: 560px;
+    padding: 2rem;
+    border: 1px solid black;
+    border-radius: .5rem;
+    padding: 4rem 5rem;
+}
+
+.login-wrapper{
+    width: 480px;
     padding: 2rem;
     border: 1px solid black;
     border-radius: .5rem;

@@ -1,4 +1,4 @@
-import { Alert, Button, Chip, Snackbar } from "@mui/material";
+import { Alert, Button, Chip, Link, Snackbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
@@ -7,18 +7,24 @@ import {
   useFetchUserDataMutation,
 } from "../services/appApi";
 import ListAltRoundedIcon from "@mui/icons-material/ListAltRounded";
-import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
 import "../style/DisplayProfile.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import VisibilityRounded from "@mui/icons-material/VisibilityRounded";
+import { LinkedIn } from "@mui/icons-material";
+import { BootstrapTooltip } from "./Navbar";
 
 const DisplayProfile = () => {
   const user = useSelector((state) => state?.user?.data);
   const userToken = useSelector((state) => state?.user?.token);
 
   const [queriedUser, setQueriedUser] = useState(null);
+  const [githubUsername, setGithubUsername] = useState(queriedUser?.githubLink);
+  const [linkedInUsername, setLinkedInUsername] = useState(
+    queriedUser?.linkedInLink
+  );
 
   const [response, setResponse] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -34,8 +40,7 @@ const DisplayProfile = () => {
 
   useEffect(() => {
     let requestedUser = searchParams.get("user");
-    if(!requestedUser && user)
-      requestedUser = user?.name;
+    if (!requestedUser && user) requestedUser = user?.name;
 
     fetchUserDataFunction({
       name: requestedUser,
@@ -52,9 +57,8 @@ const DisplayProfile = () => {
 
   useEffect(() => {
     let requestedUser = searchParams.get("user");
-    if(!requestedUser && user)
-      requestedUser = user?.name;
-    
+    if (!requestedUser && user) requestedUser = user?.name;
+
     fetchPostWithOptionsFunction({
       options,
       name: requestedUser,
@@ -69,6 +73,15 @@ const DisplayProfile = () => {
       }
     });
   }, [options, fetchPostWithOptionsFunction, searchParams, userToken, user]);
+
+  useEffect(() => {
+    const git = queriedUser?.githubLink?.split("/");
+    setGithubUsername(git?.slice(-1));
+
+    const linkedin = queriedUser?.linkedInLink?.split("/");
+    if (linkedin?.slice(-1)?.[0]?.length === 0) linkedin?.pop();
+    setLinkedInUsername(linkedin?.slice(-1));
+  }, [queriedUser]);
 
   return (
     <>
@@ -110,6 +123,36 @@ const DisplayProfile = () => {
                 </div>
               </div>
               <div className="users-about">{queriedUser?.about}</div>
+              <div className="user_social_links">
+                {queriedUser?.githubLink !== "" && (
+                  <BootstrapTooltip title="Github" placement="right">
+                    <Link
+                      target={"_blank"}
+                      rel="noopener"
+                      underline="none"
+                      className="user_social_links_description black_dull"
+                      href={`${queriedUser?.githubLink}`}
+                    >
+                      <GitHubIcon />
+                      {githubUsername}
+                    </Link>
+                  </BootstrapTooltip>
+                )}
+                {queriedUser?.linkedInLink !== "" && (
+                  <BootstrapTooltip title="LinkedIn" placement="right">
+                    <Link
+                      target={"_blank"}
+                      rel="noopener"
+                      underline="none"
+                      className="user_social_links_description black_dull"
+                      href={`${queriedUser?.linkedInLink}`}
+                    >
+                      <LinkedIn />
+                      {linkedInUsername}
+                    </Link>
+                  </BootstrapTooltip>
+                )}
+              </div>
               <Button
                 style={{
                   display: queriedUser?.name === user?.name ? "flex" : "none",
@@ -183,16 +226,6 @@ const DisplayProfile = () => {
                 >
                   Recent Doubts
                 </Button>
-                <Button
-                  onClick={() => setOptions("recent_replies")}
-                  variant="text"
-                  className={`custom_btn ${
-                    options === "recent_replies" ? "active" : ""
-                  }`}
-                  startIcon={<FactCheckOutlinedIcon />}
-                >
-                  Recent Replies
-                </Button>
               </div>
               <div className="navigation_link">
                 <Button
@@ -253,12 +286,24 @@ const DisplayProfile = () => {
                 </div>
               ) : options === "recent_doubts" ? (
                 <div className="lower_insider">
-                  {optionsResult?.map((element, idx) => (
-                    <div className="options_outer" onClick={() => navigate(`/doubt?id=${element?._id}&src=${window.location.pathname}`)} key={idx}>
+                  {!!optionsResult && optionsResult?.map((element, idx) => (
+                    <div
+                      className="options_outer"
+                      onClick={() =>
+                        navigate(
+                          `/doubt?id=${element?._id}&src=${window.location.pathname}`
+                        )
+                      }
+                      key={idx}
+                    >
                       <div className="post_title">{element?.doubtTitle}</div>
 
                       <div className="doubt_statistics">
-                        <Button disabled startIcon={<VisibilityRounded />} className="doubt_views black">{`${element?.views} views`}</Button>
+                        <Button
+                          disabled
+                          startIcon={<VisibilityRounded />}
+                          className="doubt_views black"
+                        >{`${!element?.views ? 0 : element?.views} views`}</Button>
                         {Math.floor(
                           Math.abs(Date.now() - Date.parse(element.createdAt)) /
                             (1000 * 60)

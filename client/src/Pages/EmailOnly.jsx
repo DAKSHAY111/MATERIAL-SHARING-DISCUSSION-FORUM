@@ -1,9 +1,15 @@
-import { Alert, Backdrop, Button, CircularProgress, TextField } from "@mui/material";
+import {
+  Alert,
+  Backdrop,
+  Button,
+  CircularProgress,
+  TextField,
+} from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRequestNewPasswordMutation } from "../services/appApi";
 
-import google from "../static/google.png";
+// import google from "../static/google.png";
 
 const EmailOnly = () => {
   const [inputEmail, setInputEmail] = useState("");
@@ -65,9 +71,10 @@ const EmailOnly = () => {
         </Alert>
       </Backdrop>
       <div className="flex-center-wrapper row-gap-2">
-        <div className="company-title">
+        {/* <div className="company-title">
           <img id="company-logo" src={google} alt="GoogleLogo" />
-        </div>
+        </div> */}
+        <div className="company-title">CodeStudy</div>
         <div className="info-paragraph">
           An verification mail will be sent to the email provided by you. Please
           reset your password within 2 hours of time limit otherwise link will
@@ -95,13 +102,11 @@ const EmailOnly = () => {
               Back to login
             </Button>
             <Button disabled={disableSubmit} onClick={handleResetPassword}>
-              {
-                disableSubmit ? (
-                  <CircularProgress style={{ width: "20px", height: "20px" }} />
-                ) : (
-                  "Send Email"
-                )
-              }
+              {disableSubmit ? (
+                <CircularProgress style={{ width: "20px", height: "20px" }} />
+              ) : (
+                "Send Email"
+              )}
             </Button>
           </div>
         </div>

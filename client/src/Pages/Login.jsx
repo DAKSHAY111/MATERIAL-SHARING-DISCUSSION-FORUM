@@ -73,7 +73,7 @@ const Login = () => {
           {alertMessage}
         </Alert>
       </Backdrop>
-      <div className="signup-wrapper">
+      <div className="login-wrapper">
         <div className="flex-center-wrapper row-gap-2">
           {/* <div className="company-title">
             <img id="company-logo" src={google} alt="GoogleLogo" />

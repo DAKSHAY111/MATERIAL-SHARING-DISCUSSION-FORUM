@@ -17,7 +17,6 @@ code {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 90vh;
 }
 
 .flex-row-2{

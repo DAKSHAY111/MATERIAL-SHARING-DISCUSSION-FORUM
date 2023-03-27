@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const replySchema = new mongoose.Schema({
-    user: {
+    creator: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
     },

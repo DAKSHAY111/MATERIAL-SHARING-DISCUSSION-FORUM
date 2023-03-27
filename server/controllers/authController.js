@@ -257,42 +257,6 @@ exports.myProfile = catchAsync(async (req, res, next) => {
   });
 });
 
-const filterObj = (obj, ...allowedFields) => {
-  const newObj = {};
-
-  Object.keys(obj).forEach((ele) => {
-    if (allowedFields.includes(ele)) newObj[ele] = obj[ele];
-  });
-  return newObj;
-};
-
-exports.updateProfile = catchAsync(async (req, res, next) => {
-  console.log(req.body.user);
-  if (req.body.password || req.body.passwordConfirm) {
-    return next(
-      new AppError(
-        'This route is not for update Please use /updateMyPassword',
-        400
-      )
-    );
-  }
-  const filteredBody = filterObj(
-    req.body,
-    'name',
-    'about',
-    'photo',
-  );
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
-    new: true,
-    runValidators: true,
-  });
-
-  res.status(201).json({
-    status: 'success',
-    data: updatedUser,
-  });
-});
-
 exports.protect = catchAsync(async (req, res, next) => {
   const { headers } = req.body;
   let token;

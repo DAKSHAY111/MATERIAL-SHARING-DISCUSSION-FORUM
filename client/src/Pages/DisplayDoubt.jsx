@@ -1,9 +1,12 @@
-import { Avatar, Button, Chip } from "@mui/material";
+import { Avatar, Button, Chip, IconButton } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 
 import {
   useFetchSingleDoubtMutation,
   useAddVoteToDoubtMutation,
+  useAddReplyToDoubtMutation,
+  useAddVoteToReplyMutation,
+  useSortRepliesMutation,
 } from "../services/appApi";
 
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
@@ -23,18 +26,23 @@ import { BootstrapTooltip } from "../components/Navbar";
 
 import parse from "html-react-parser";
 import JoditEditor from "jodit-react";
+import { ReplyRounded } from "@mui/icons-material";
 
 const DisplayDoubt = () => {
   const user = useSelector((state) => state?.user?.data);
   const userToken = useSelector((state) => state?.user?.token);
 
   const [requestedDoubt, setRequestedDoubt] = useState(null);
+  const [reply, setReply] = useState("");
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [fetchSingleDoubtFunction] = useFetchSingleDoubtMutation();
   const [addVoteToDoubtFunction] = useAddVoteToDoubtMutation();
+  const [addReplyToDoubtFunction] = useAddReplyToDoubtMutation();
+  const [addVoteToReplyFunction] = useAddVoteToReplyMutation();
+  const [sortRepliesFunction] = useSortRepliesMutation();
 
   const commentConfig = useMemo(
     () => ({
@@ -45,14 +53,11 @@ const DisplayDoubt = () => {
         "italic",
         "ul",
         "ol",
+        "link",
         "underline",
         "font",
-        "link",
-        "unlink",
         "align",
-        "image",
         "fontsize",
-        "brush",
         "redo",
         "undo",
       ],
@@ -129,7 +134,7 @@ const DisplayDoubt = () => {
                       });
                     }}
                     className={`custom_btn active ${
-                      requestedDoubt?.doubtData?.upVotes?.indexOf(user._id) ===
+                      requestedDoubt?.doubtData?.upVotes?.indexOf(user?._id) ===
                       -1
                         ? "black_dull"
                         : "black"
@@ -161,7 +166,7 @@ const DisplayDoubt = () => {
                     }}
                     className={`custom_btn active ${
                       requestedDoubt?.doubtData?.downVotes?.indexOf(
-                        user._id
+                        user?._id
                       ) === -1
                         ? "black_dull"
                         : "black"
@@ -293,14 +298,62 @@ const DisplayDoubt = () => {
               <div className="section_iii_navigation">
                 <div className="left_hand_side">
                   <Button
-										disabled
+                    disabled
                     startIcon={<ChatIcon />}
                     className="custom_btn black doubt_action_btn"
-                  >{`Comments: ${requestedDoubt?.doubtData?.replies?.length}`}</Button>
+                  >{`Comments: ${
+                    !requestedDoubt?.replies?.length
+                      ? 0
+                      : requestedDoubt?.replies?.length
+                  }`}</Button>
                 </div>
                 <div className="right_hand_side">
                   <div className="btn_group">
                     <Button
+                      disabled={!reply.length}
+                      size="small"
+                      startIcon={<ReplyRounded />}
+                      className="custom_btn black_dull doubt_action_btn"
+                      onClick={async () => {
+                        await addReplyToDoubtFunction({
+                          reply,
+                          doubt: requestedDoubt?.doubtData,
+                          headers: {
+                            authorization: "Bearer " + userToken,
+                          },
+                        }).then(async ({ data, error }) => {
+                          if (data) {
+                            setRequestedDoubt(data);
+                            enqueueSnackbar("Reply posted successfully!", {
+                              autoHideDuration: 4000,
+                            });
+                          } else
+                            enqueueSnackbar(error.data, {
+                              variant: "error",
+                              autoHideDuration: 4000,
+                            });
+                          setReply("");
+                        });
+                      }}
+                    >
+                      Add Reply
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        await sortRepliesFunction({
+                          id: searchParams.get("id"),
+                          type: "most_votes",
+                        }).then(async ({ data, error }) => {
+                          if (data) {
+                            setRequestedDoubt(data);
+                          } else {
+                            enqueueSnackbar(error.data, {
+                              variant: "error",
+                              autoHideDuration: 4000,
+                            });
+                          }
+                        });
+                      }}
                       size="small"
                       startIcon={<WhatshotRounded />}
                       className="custom_btn black_dull doubt_action_btn"
@@ -308,6 +361,21 @@ const DisplayDoubt = () => {
                       Most Votes
                     </Button>
                     <Button
+                      onClick={async () => {
+                        await sortRepliesFunction({
+                          id: searchParams.get("id"),
+                          type: "most_recent",
+                        }).then(async ({ data, error }) => {
+                          if (data) {
+                            setRequestedDoubt(data);
+                          } else {
+                            enqueueSnackbar(error.data, {
+                              variant: "error",
+                              autoHideDuration: 4000,
+                            });
+                          }
+                        });
+                      }}
                       size="small"
                       className="custom_btn black_dull doubt_action_btn"
                     >
@@ -318,7 +386,198 @@ const DisplayDoubt = () => {
               </div>
               <div className="comment_editor_outer">
                 <div className="comment_editor_wrapper">
-                  <JoditEditor config={commentConfig} />
+                  <JoditEditor
+                    config={commentConfig}
+                    value={reply}
+                    onChange={(e) => setReply(e)}
+                  />
+                </div>
+              </div>
+              <div className="display_replies_outer">
+                <div className="display_replies_wrapper">
+                  {requestedDoubt?.replies?.map((reply, idx) => (
+                    <div key={idx} className="single_reply_outer">
+                      <div className="single_reply_wrapper">
+                        <div className="owner_info_outer">
+                          <div className="owner_info_wrapper">
+                            <Avatar src={reply?.ownerInfo?.photo} />
+                            <div
+                              onClick={() =>
+                                navigate(
+                                  `/account?user=${reply?.ownerInfo?.name}`
+                                )
+                              }
+                              className="doubt_owner_name"
+                            >
+                              {reply?.ownerInfo?.name}
+                            </div>
+                            <BootstrapTooltip
+                              title="Reputation"
+                              placement="top"
+                            >
+                              <div className="owner_reputation">
+                                <Button
+                                  size="small"
+                                  className="custom_btn m-0 black_dull doubt_owner_reputation"
+                                  style={{
+                                    fontFamily: "Segoe UI",
+                                    fontWeight: 500,
+                                  }}
+                                  startIcon={<Star />}
+                                >
+                                  {reply?.ownerInfo?.reputation}
+                                </Button>
+                              </div>
+                            </BootstrapTooltip>
+                            <div className="reply_action_outer">
+                              <IconButton
+                                onClick={async () => {
+                                  await addVoteToReplyFunction({
+                                    doubt: requestedDoubt,
+                                    reply: reply?.replyData,
+                                    type: "up",
+                                    headers: {
+                                      authorization: "Bearer " + userToken,
+                                    },
+                                  }).then(async ({ data, error }) => {
+                                    if (data) {
+                                      setRequestedDoubt(data);
+                                    } else
+                                      enqueueSnackbar(error.data, {
+                                        variant: "error",
+                                        autoHideDuration: 4000,
+                                      });
+                                  });
+                                }}
+                              >
+                                <ArrowDropUpSharp
+                                  className={`${
+                                    reply?.replyData?.upVotes?.indexOf(
+                                      user?._id
+                                    ) === -1
+                                      ? "black_dull"
+                                      : "black"
+                                  }`}
+                                />
+                              </IconButton>
+                              <div
+                                style={{
+                                  fontFamily: "Segoe UI",
+                                  fontWeight: 500,
+                                }}
+                              >
+                                {!reply?.replyData?.upVotes?.length
+                                  ? 0
+                                  : reply?.replyData?.upVotes?.length}
+                              </div>
+                              <IconButton
+                                onClick={async () => {
+                                  await addVoteToReplyFunction({
+                                    doubt: requestedDoubt,
+                                    reply: reply?.replyData,
+                                    type: "down",
+                                    headers: {
+                                      authorization: "Bearer " + userToken,
+                                    },
+                                  }).then(async ({ data, error }) => {
+                                    if (data) {
+                                      setRequestedDoubt(data);
+                                    } else
+                                      enqueueSnackbar(error.data, {
+                                        variant: "error",
+                                        autoHideDuration: 4000,
+                                      });
+                                  });
+                                }}
+                              >
+                                <ArrowDropDownIcon
+                                  className={`${
+                                    reply?.replyData?.downVotes?.indexOf(
+                                      user?._id
+                                    ) === -1
+                                      ? "black_dull"
+                                      : "black"
+                                  }`}
+                                />
+                              </IconButton>
+                            </div>
+                            {Math.floor(
+                              Math.abs(
+                                Date.now() -
+                                  Date.parse(reply?.replyData?.createdAt)
+                              ) /
+                                (1000 * 60)
+                            ) < 60 ? (
+                              <div className="doubt_posted_time">
+                                {`created ${Math.floor(
+                                  Math.abs(
+                                    Date.now() -
+                                      Date.parse(reply?.replyData?.createdAt)
+                                  ) /
+                                    (1000 * 60)
+                                )} minutes ago`}
+                              </div>
+                            ) : Math.floor(
+                                Math.abs(
+                                  Date.now() -
+                                    Date.parse(reply?.replyData?.createdAt)
+                                ) /
+                                  (1000 * 60 * 60)
+                              ) < 24 ? (
+                              <div className="doubt_posted_time">{`created ${Math.floor(
+                                Math.abs(
+                                  Date.now() -
+                                    Date.parse(reply?.replyData?.createdAt)
+                                ) /
+                                  (1000 * 60 * 60)
+                              )} Hours ago`}</div>
+                            ) : Math.floor(
+                                Math.abs(
+                                  Date.now() -
+                                    Date.parse(reply?.replyData?.createdAt)
+                                ) /
+                                  (1000 * 60 * 60 * 24)
+                              ) < 30 ? (
+                              <div className="doubt_posted_time">{`created ${Math.floor(
+                                Math.abs(
+                                  Date.now() -
+                                    Date.parse(reply?.replyData?.createdAt)
+                                ) /
+                                  (1000 * 60 * 60 * 24)
+                              )} Days ago`}</div>
+                            ) : Math.floor(
+                                Math.abs(
+                                  Date.now() -
+                                    Date.parse(reply?.replyData?.createdAt)
+                                ) /
+                                  (1000 * 60 * 60 * 24 * 30)
+                              ) < 12 ? (
+                              <div className="doubt_posted_time">{`created ${Math.floor(
+                                Math.abs(
+                                  Date.now() -
+                                    Date.parse(reply?.replyData?.createdAt)
+                                ) /
+                                  (1000 * 60 * 60 * 24 * 30)
+                              )} Months ago`}</div>
+                            ) : (
+                              <div className="doubt_posted_time">{`created ${Math.floor(
+                                Math.abs(
+                                  Date.now() -
+                                    Date.parse(reply?.replyData?.createdAt)
+                                ) /
+                                  (1000 * 60 * 60 * 24 * 30 * 12)
+                              )} Years ago`}</div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="doubt_description_outer">
+                          <div className="doubt_description_wrapper">
+                            {parse(reply?.replyData?.reply)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useResetPasswordMutation } from "../services/appApi";
 
-import google from "../static/google.png";
+// import google from "../static/google.png";
 
 import "../style/Signup.css";
 
@@ -94,8 +94,11 @@ const ResetPassword = () => {
       </Backdrop>
       <div className="signup-wrapper">
         <div className="flex-center-wrapper row-gap-2">
-          <div className="company-title">
+          {/* <div className="company-title">
             <img id="company-logo" src={google} alt="GoogleLogo" />
+          </div> */}
+          <div className="company-title">
+            CodeStudy
           </div>
           <div className="reset-info-paragraph">
             We recommend to type in strong password of minimum length 8 with

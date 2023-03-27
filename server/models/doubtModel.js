@@ -13,10 +13,6 @@ const doubtSchema = new mongoose.Schema({
         type: String,
         required: [true, "Description cannot be empty"],
     },
-    replies: {
-        type: Array,
-        default: [],
-    },
     tags: {
         type: Array,
         default: [],

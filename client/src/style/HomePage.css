@@ -1,9 +1,14 @@
 .home-page-outer{
-    width: 100%;
-    height: calc(100vh - 65px) !important;
-    overflow-y: scroll;
     display: flex;
-    margin-top: 60px !important;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    margin-top: 4% !important;
+    width: 100% !important;
+}
+
+.home-page-wrapper{
+    width: 100% !important;
 }
 
 .search-outer{
@@ -170,6 +175,9 @@
 }
 
 @media screen and (max-width:960px) {
+    .home-page-outer{
+        left: 10% !important;
+    }
     .search-wrapper{
         display: flex;
         flex-direction: column;
