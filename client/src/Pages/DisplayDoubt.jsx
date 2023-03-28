@@ -7,6 +7,7 @@ import {
   useAddReplyToDoubtMutation,
   useAddVoteToReplyMutation,
   useSortRepliesMutation,
+  useDeleteDoubtMutation,
 } from "../services/appApi";
 
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
@@ -26,11 +27,15 @@ import { BootstrapTooltip } from "../components/Navbar";
 
 import parse from "html-react-parser";
 import JoditEditor from "jodit-react";
-import { ReplyRounded } from "@mui/icons-material";
+import { DeleteRounded, EditRounded, ReplyRounded } from "@mui/icons-material";
+import DisplayPostComponent from "../components/DisplayPostComponent";
 
 const DisplayDoubt = () => {
   const user = useSelector((state) => state?.user?.data);
   const userToken = useSelector((state) => state?.user?.token);
+
+  const [disableDelete, setDisableDelete] = useState(false);
+  const [edit, setEdit] = useState(false);
 
   const [requestedDoubt, setRequestedDoubt] = useState(null);
   const [reply, setReply] = useState("");
@@ -43,6 +48,7 @@ const DisplayDoubt = () => {
   const [addReplyToDoubtFunction] = useAddReplyToDoubtMutation();
   const [addVoteToReplyFunction] = useAddVoteToReplyMutation();
   const [sortRepliesFunction] = useSortRepliesMutation();
+  const [deleteDoubtFunction] = useDeleteDoubtMutation();
 
   const commentConfig = useMemo(
     () => ({
@@ -81,6 +87,7 @@ const DisplayDoubt = () => {
   return (
     <div className="display_doubt_outer">
       <SnackbarProvider maxSnack={3}></SnackbarProvider>
+      {edit && <DisplayPostComponent existingDoubt={requestedDoubt?.doubtData} />}
       {!!requestedDoubt && (
         <div className="display_doubt_wrapper">
           <div className="section_i_outer">
@@ -100,6 +107,48 @@ const DisplayDoubt = () => {
               </div>
               <div className="right_hand_side">
                 <div className="btn_group">
+                  {
+                    user?._id === requestedDoubt?.doubtData?.creator && (
+                      <Button onClick={() => setEdit(true)} className="custom_btn black_dull" startIcon={<EditRounded />}>
+                        Edit
+                      </Button>
+                    )
+                  }
+                  {user?._id === requestedDoubt?.doubtData?.creator && (
+                    <BootstrapTooltip title="Delete Post" placement="left">
+                      <Button
+                        disabled={disableDelete}
+                        onClick={async () => {
+                          setDisableDelete(true);
+                          await deleteDoubtFunction({
+                            doubt: requestedDoubt?.doubtData,
+                            headers: {
+                              authorization: "Bearer " + userToken,
+                            },
+                          }).then(({ data, error }) => {
+                            if(data){
+                              enqueueSnackbar("Doubt deleted successfully!", {
+                                variant: "info",
+                                autoHideDuration: 3000,
+                              });
+                              setTimeout(() => window.location.href = "/discuss", 3000);
+                            }
+                            else{
+                              enqueueSnackbar(error.data, {
+                                variant: "error",
+                                autoHideDuration: 3000,
+                              });
+                              setDisableDelete(false);
+                            }
+                          });
+                        }}
+                        className="custom_btn black_dull"
+                        startIcon={<DeleteRounded />}
+                      >
+                        Delete
+                      </Button>
+                    </BootstrapTooltip>
+                  )}
                   <Button
                     disabled
                     className="custom_btn active black"

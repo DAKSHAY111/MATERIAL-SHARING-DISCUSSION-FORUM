@@ -173,6 +173,14 @@ const appApi = createApi({
       }),
     }),
 
+    deleteDoubt: builder.mutation({
+      query: (data) => ({
+        url: "/doubts/delete",
+        method: "post",
+        body: data,
+      }),
+    }),
+
   }),
 });
 
@@ -198,5 +206,6 @@ export const {
   useAddReplyToDoubtMutation,
   useAddVoteToReplyMutation,
   useSortRepliesMutation,
+  useDeleteDoubtMutation,
 } = appApi;
 export default appApi;

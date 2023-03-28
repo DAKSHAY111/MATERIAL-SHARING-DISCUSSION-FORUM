@@ -1,19 +1,14 @@
 import {
   Avatar,
-  Backdrop,
   Button,
   Chip,
-  CircularProgress,
-  Dialog,
   IconButton,
   InputLabel,
-  TextField,
 } from "@mui/material";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useFetchAllDoubtsMutation,
   useFetchTagsMutation,
-  useCreateDoubtMutation,
 } from "../services/appApi";
 
 import { styled, alpha } from "@mui/material/styles";
@@ -24,19 +19,13 @@ import "../style/Discuss.css";
 import CloseRounded from "@mui/icons-material/CloseRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import WhatshotRoundedIcon from "@mui/icons-material/WhatshotRounded";
-import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import ArrowDropUpSharpIcon from "@mui/icons-material/ArrowDropUpSharp";
 
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 
-import JoditEditor from "jodit-react";
-import PictureAsPdfRounded from "@mui/icons-material/PictureAsPdfRounded";
-import ImageRounded from "@mui/icons-material/ImageRounded";
-import { BootstrapTooltip } from "../components/Navbar";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import VisibilityRounded from "@mui/icons-material/VisibilityRounded";
+import DisplayPostComponent from "../components/DisplayPostComponent";
 // import parse from "html-react-parser";
 
 const Search = styled("div")(({ theme }) => ({
@@ -64,32 +53,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Discuss = () => {
-  const userToken = useSelector((state) => state?.user?.token);
-
-  const descriptionConfig = useMemo(
-    () => ({
-      readonly: false,
-      placeholder: "Enter your description here...",
-      buttons: [
-        "bold",
-        "italic",
-        "ul",
-        "ol",
-        "underline",
-        "font",
-        "link",
-        "unlink",
-        "align",
-        "image",
-        "fontsize",
-        "brush",
-        "redo",
-        "undo",
-      ],
-    }),
-    []
-  );
-
   const [doubts, setDoubts] = useState([]);
   const [allDoubts, setAllDoubts] = useState([]);
   const [searchField, setSearchField] = useState("");
@@ -99,22 +62,9 @@ const Discuss = () => {
 
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
-  const [postTags, setPostTags] = useState([]);
-
-  const [doubtTitle, setDoubtTitle] = useState("");
-  const descriptionEditor = useRef(null);
-  const [attachedFiles, setAttachedFiles] = useState([]);
-  const [newDescription, setNewDescription] = useState("");
-
-  const [previewFile, setPreviewFile] = useState(null);
-  const [openPreview, setOpenPreview] = useState(false);
-
-  const [disableSubmit, setDisableSubmit] = useState(false);
-  const [status, setStaus] = useState("Post");
 
   const [fetchAllDoubtsFunction] = useFetchAllDoubtsMutation();
   const [fetchTagsFunction] = useFetchTagsMutation();
-  const [createDoubtFunction] = useCreateDoubtMutation();
 
   const navigate = useNavigate();
 
@@ -152,283 +102,17 @@ const Discuss = () => {
     setDoubts((state) =>
       state.filter(
         (doubt) =>
-          doubt?.doubtDetails?.doubtTitle?.includes(searchField) ||
-          doubt?.ownerInfo?.name?.includes(searchField)
+          doubt?.doubtDetails?.doubtTitle?.toLowerCase()?.includes(searchField?.toLowerCase()) ||
+          doubt?.ownerInfo?.name?.toLowerCase()?.includes(searchField?.toLowerCase())
       )
     );
   }, [selectedTags, allDoubts, searchField]);
 
-  const handleSubmit = async () => {
-    if (doubtTitle === "" || newDescription === "") {
-      enqueueSnackbar("Title can not be empty!", {
-        variant: "error",
-        autoHideDuration: 3000,
-      });
-      return;
-    }
-
-    setDisableSubmit(true);
-    setStaus("Uploading files...");
-    const fileURLS = [];
-
-    for (const file of attachedFiles) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "post_uploader_preset");
-
-      try {
-        const response = await fetch(
-          "https://api.cloudinary.com/v1_1/dhdhpzhtq/image/upload",
-          {
-            method: "post",
-            body: formData,
-          }
-        );
-        let urlData = await response.json();
-        urlData = urlData?.url;
-
-        fileURLS.push({
-          url: urlData,
-          type: file?.type,
-        });
-      } catch (ex) {
-        enqueueSnackbar("Error Occurred while uploading files!", {
-          variant: "error",
-          autoHideDuration: 3000,
-        });
-        setDisableSubmit(false);
-      }
-    }
-
-    setStaus("Posting...");
-    await createDoubtFunction({
-      doubtTitle: doubtTitle,
-      tags: postTags,
-      media: fileURLS,
-      description: newDescription,
-      headers: { authorization: "Bearer " + userToken },
-    }).then(({ data, error }) => {
-      if (data) {
-        enqueueSnackbar("Doubt posted successfully!", {
-          autoHideDuration: 3000,
-        });
-        window.location.href = "/discuss";
-      } else {
-        enqueueSnackbar(error.data.message, {
-          variant: "error",
-          autoHideDuration: 3000,
-        });
-        setStaus("Post");
-        setDisableSubmit(false);
-      }
-    });
-  };
-
   return (
     <div className="discuss-outer">
       <div className="discuss-wrapper">
-        <Backdrop
-          className="backdrop-dialog"
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 999 }}
-          open={openPreview}
-          onClick={() => setOpenPreview(false)}
-        >
-          {previewFile !== null ? (
-            <>
-              <BootstrapTooltip title="Close Preview" position="bottom">
-                <CloseRounded
-                  onClick={() => setOpenPreview(false)}
-                  className="close-preview-icon"
-                />
-              </BootstrapTooltip>
-              <object
-                aria-labelledby="Previewing Document..."
-                onClick={() => setOpenPreview(false)}
-                width={"100%"}
-                height="100%"
-                data={URL.createObjectURL(previewFile)}
-                type={previewFile?.type}
-              />
-            </>
-          ) : (
-            ""
-          )}
-        </Backdrop>
         <SnackbarProvider maxSnack={3}></SnackbarProvider>
-        <Dialog
-          disableEnforceFocus
-          fullScreen
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={openPostDialog}
-        >
-          <div className="post-create-dialog-outer">
-            <div className="post-create-dialog-wrapper">
-              <div className="post-input-item flex-row">
-                <TextField
-                  className="custom-post-input-field width_60"
-                  type="text"
-                  variant="outlined"
-                  label="Topic Title"
-                  margin="dense"
-                  id="input-title"
-                  required
-                  autoFocus={true}
-                  placeholder="Enter topic title..."
-                  autoComplete={"off"}
-                  value={doubtTitle}
-                  onChange={(e) => setDoubtTitle(e.target.value)}
-                />
-                <div className="btn-group">
-                  <Button
-                    onClick={() => {
-                      setDoubts((state) =>
-                        state?.sort(
-                          (a, b) =>
-                            Date.parse(b?.doubtDetails?.createdAt) -
-                            Date.parse(a?.doubtDetails?.createdAt)
-                        )
-                      );
-                      setCriteria("newest_to_oldest");
-                      setOpenPostDialog(false);
-                    }}
-                    className="custom_btn"
-                  >
-                    Close
-                  </Button>
-                  <Button
-                    disabled={disableSubmit}
-                    onClick={handleSubmit}
-                    endIcon={
-                      disableSubmit ? (
-                        <CircularProgress style={{ width: 17, height: 17 }} />
-                      ) : (
-                        <SendRoundedIcon />
-                      )
-                    }
-                    className="custom_btn"
-                  >
-                    {status}
-                  </Button>
-                </div>
-              </div>
-              <div className="post-input-item">
-                <div className="post-doubts-tags-outer">
-                  <div className="post-doubts-tags-wrapper">
-                    {tags?.map((tag) => (
-                      <Chip
-                        onClick={() => {
-                          if (postTags.indexOf(tag) === -1)
-                            setPostTags((state) => [...state, tag]);
-                          else
-                            setPostTags((state) =>
-                              state.filter((all) => all !== tag)
-                            );
-                        }}
-                        className={`home-post-tags ${
-                          postTags.indexOf(tag) !== -1 ? "active" : ""
-                        }`}
-                        key={tag}
-                        label={tag}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="post-input-item">
-                <JoditEditor
-                  config={descriptionConfig}
-                  ref={descriptionEditor}
-                  onChange={(e) => setNewDescription(e)}
-                  className="custom-post-input-field"
-                />
-              </div>
-              <div className="post-input-item">
-                <label className="input-label" htmlFor="attach_file_input">
-                  <AttachFileRoundedIcon />
-                  Attach Files
-                </label>
-                <input
-                  onChange={(e) => {
-                    if (
-                      e.target.files[0].type !== "image/jpg" &&
-                      e.target.files[0].type !== "image/png" &&
-                      e.target.files[0].type !== "image/jpeg" &&
-                      e.target.files[0].type !== "application/pdf"
-                    ) {
-                      enqueueSnackbar("File type not supported!", {
-                        variant: "error",
-                        autoHideDuration: 3000,
-                      });
-                      return;
-                    }
-                    setAttachedFiles((state) => [...state, e.target.files[0]]);
-                  }}
-                  type="file"
-                  hidden
-                  id="attach_file_input"
-                  accept={[
-                    "image/jpg",
-                    "image/png",
-                    "image/jpeg",
-                    "application/pdf",
-                  ]}
-                />
-              </div>
-              <div className="attached-file-outer">
-                <div className="attached-file-wrapper">
-                  {attachedFiles?.map((file, idx) => (
-                    <div className="attached-file-viewer" key={idx}>
-                      <div className="attached-file-type-viewer">
-                        {file?.type?.substr(file?.type?.length - 3, 3) ===
-                        "pdf" ? (
-                          <PictureAsPdfRounded
-                            onClick={() => {
-                              setPreviewFile(file);
-                              setOpenPreview(true);
-                            }}
-                            className="post-previewing-icon"
-                          />
-                        ) : (
-                          <ImageRounded
-                            onClick={() => {
-                              setPreviewFile(file);
-                              setOpenPreview(true);
-                            }}
-                            className="post-previewing-icon"
-                          />
-                        )}
-                      </div>
-                      <div className="post-action-outer">
-                        <div className="attached-file-name-viewer">
-                          {file?.name}
-                        </div>
-                        <div className="remove-action">
-                          <BootstrapTooltip
-                            title="Remove file"
-                            placement="right"
-                          >
-                            <IconButton
-                              onClick={() => {
-                                document.getElementById(
-                                  "attach_file_input"
-                                ).value = null;
-                                setAttachedFiles((state) =>
-                                  state?.filter((item, idx2) => idx2 !== idx)
-                                );
-                              }}
-                            >
-                              <CloseRounded />
-                            </IconButton>
-                          </BootstrapTooltip>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </Dialog>
+        {openPostDialog && <DisplayPostComponent />}
         <div className="discuss-main-component">
           <div className="discuss-main-component-wrapper">
             <div className="filtering-outer">
