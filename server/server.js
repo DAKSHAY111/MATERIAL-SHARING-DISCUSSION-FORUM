@@ -9,7 +9,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,

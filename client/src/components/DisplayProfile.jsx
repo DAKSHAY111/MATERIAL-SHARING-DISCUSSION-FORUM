@@ -1,4 +1,4 @@
-import { Alert, Button, Chip, Link, Snackbar } from "@mui/material";
+import { Alert, Button, Chip, CircularProgress, Link, Snackbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
@@ -38,7 +38,10 @@ const DisplayProfile = () => {
   const [fetchPostWithOptionsFunction] = useFetchPostWithOptionsMutation();
   const [fetchUserDataFunction] = useFetchUserDataMutation();
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    setLoading(true);
     let requestedUser = searchParams.get("user");
     if (!requestedUser && user) requestedUser = user?.name;
 
@@ -52,6 +55,7 @@ const DisplayProfile = () => {
         setAlertMessage("Unable to reach server! Please try again!");
         setResponse(true);
       }
+      setLoading(false);
     });
   }, [fetchUserDataFunction, searchParams, userToken, user]);
 
@@ -85,6 +89,7 @@ const DisplayProfile = () => {
 
   return (
     <>
+    {loading && <CircularProgress style={{ width: 40, height: 40, position: "absolute", top: "50%", left: "50%", color: "#1772cd" }} />}
       <Snackbar
         onClose={() => setResponse(false)}
         autoHideDuration={2000}
@@ -98,7 +103,7 @@ const DisplayProfile = () => {
           {alertMessage}
         </Alert>
       </Snackbar>
-      {queriedUser && (
+      {!loading && !!queriedUser && (
         <div className="user-profile-outer">
           <div className="user-profile-upper">
             <div className="user-profile-top-i">

@@ -26,7 +26,7 @@ const ResetPassword = () => {
     setToken(searchParams.get("id"));
   }, [searchParams]);
 
-  const handleResetPassword = (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     setDisableSubmit(true);
     if (password === "" ||
@@ -53,7 +53,7 @@ const ResetPassword = () => {
       setDisableSubmit(false);
       return;
     }
-    resetPasswordFunc({ token: token, newPassword: password }).then(
+    await resetPasswordFunc({ token: token, newPassword: password }).then(
       ({ data, error }) => {
         if (error) {
           setIsError(true);
@@ -65,6 +65,7 @@ const ResetPassword = () => {
           setAlertMessage(data);
           setResponse(true);
           setDisableSubmit(false);
+          setTimeout(() => window.location.href = "/login", 1500);
         }
       }
     );

@@ -13,6 +13,7 @@ import {
   Backdrop,
   Button,
   CardActions,
+  CircularProgress,
   FormControl,
   IconButton,
   InputLabel,
@@ -105,12 +106,15 @@ const HomePage = () => {
   const [sortCriteria, setSortCriteria] = useState("most_recent");
   const [fullDescriptionPost, setFullDescriptionPost] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
   const [fetchTagsFunction] = useFetchTagsMutation();
   const [fetchAllPostsFunction] = useFetchAllPostsMutation();
   const [addPostToFavouriteFunction] = useAddPostToFavouritesMutation();
   const [voteFunction] = useAddVoteMutation();
 
   useEffect(() => {
+    setLoading(true);
     fetchTagsFunction().then(async ({ data, error }) => {
       if (error) {
         setIsError(true);
@@ -130,10 +134,12 @@ const HomePage = () => {
         setAlertMessage("Unable to connect to the server :(");
         setResponse(true);
       }
+      setLoading(false);
     });
   }, [fetchTagsFunction, fetchAllPostsFunction]);
 
   useEffect(() => {
+    setLoading(true);
     setPosts([]);
 
     if (selectedTags !== [])
@@ -172,10 +178,12 @@ const HomePage = () => {
         setPosts((state) => state);
         break;
     }
+    setLoading(false);
   }, [selectedTags, allPostsData, searchField, sortCriteria]);
 
   return (
     <div className="home-page-outer">
+      {loading && <CircularProgress style={{ width: 40, height: 40, position: "absolute", top: "50%", left: "50%", color: "#1772cd" }} />}
       <Backdrop
         className="backdrop-dialog"
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
