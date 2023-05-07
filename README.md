@@ -7,7 +7,9 @@ The project is developed using MERN Stack and is designed to be user-friendly, i
 
 We hope that this project will be useful for individuals and groups who are interested in collaborating and sharing knowledge on various topics. Please feel free to explore the code and contribute to the project by submitting pull requests or issues. Thank you for your interest in our project!
 
+## SRS Document
 
+https://drive.google.com/file/d/1s9ur7Lter7fiQFugOOg45_J2x4yFDm83/view?usp=share_link
 
 ## Demo
 
