@@ -8,9 +8,12 @@ The project is developed using MERN Stack and is designed to be user-friendly, i
 We hope that this project will be useful for individuals and groups who are interested in collaborating and sharing knowledge on various topics. Please feel free to explore the code and contribute to the project by submitting pull requests or issues. Thank you for your interest in our project!
 
 
+
 ## Demo
 
 Video Link : https://www.youtube.com/watch?v=hrPbWc7mh8o
+
+Website Link : https://harshsojitra007.github.io/CodeStudy/
 
 ## Installation Guide
 
@@ -45,3 +48,32 @@ JWT_EXPIRES_IN=SpecifyTimeInConventionsForExpiryOfTokensGenerated
 ```
 - rum `npm i` at both `server/` and `client/` folders.
 - Run `npm start` to start the project in both `server/` and `client/` folder.
+
+## Features
+
+1) Note Sharing: Users can create and share notes on various topics.
+
+2) Upvoting and Downvoting: Users can upvote or downvote notes shared by other users.
+
+3) Discussion Threads: Users can start discussion threads on various topics and engage in meaningful conversations with other users.
+
+4) Search Functionality: Users can search for notes, discussion threads, and other content using a search bar.
+
+5) User Profile: Users have their own profiles where they can view their activity history, their posts, and their comments.
+
+Security: The platform is designed with security in mind to ensure that user data is protected.
+
+### Built With
+
+This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+
+<h3 align="left">Languages and Tools:</h3>
+<p align="left"> <a href="https://www.w3schools.com/css/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> </a> <a href="https://expressjs.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original-wordmark.svg" alt="express" width="40" height="40"/> </a> <a href="https://www.mongodb.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original-wordmark.svg" alt="mongodb" width="40" height="40"/> </a> <a href="https://nodejs.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/> </a> <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> <a href="https://redux.js.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/redux/redux-original.svg" alt="redux" width="40" height="40"/> </a> </p>
+
+
+
+## Authors
+
+- [@DAKSHAY SOLANKI](https://github.com/DAKSHAY111)
+- [@HARSH SOJITRA](https://github.com/harshsojitra007)
+
