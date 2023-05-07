@@ -9,7 +9,7 @@ We hope that this project will be useful for individuals and groups who are inte
 
 ## SRS Document
 
-https://drive.google.com/file/d/1s9ur7Lter7fiQFugOOg45_J2x4yFDm83/view?usp=share_link
+[Document](https://docs.google.com/document/d/1JNK1l1UVuzRfeEsbTi0GyLNAc9kq2Gm5/edit?usp=sharing&ouid=103229390666509090327&rtpof=true&sd=true)
 
 ## Demo
 
