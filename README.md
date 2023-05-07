@@ -1,5 +1,19 @@
-# MaterialSharing-DoubtSolvingPlatform
-A MERN Stack based project to solve doubts with the help of a community and also to share good resources with community.
+
+# Notes Sharing and Doubt Solving Platform
+
+Welcome to the Notes Sharing and Discussion Forum project! This is a web-based platform that provides users with the ability to share and discuss notes, as well as engage in conversations with fellow users. This project includes user account management functionalities, such as user registration, login, and password recovery, along with features like post creation, upvoting and downvoting mechanisms, discussion threads, and search functionality.
+
+The project is developed using MERN Stack and is designed to be user-friendly, intuitive, and efficient. This project is aimed at improving user experience and making it easy for users to share and discuss notes in a secure and reliable manner.
+
+We hope that this project will be useful for individuals and groups who are interested in collaborating and sharing knowledge on various topics. Please feel free to explore the code and contribute to the project by submitting pull requests or issues. Thank you for your interest in our project!
+
+
+## Demo
+
+Video Link : https://www.youtube.com/watch?v=hrPbWc7mh8o
+
+## Installation Guide
+
 * [Project-Installation-Guide](#project-installation-guide)
 # Project-Installation-Guide
 - Create a `.env` file at `server/`
