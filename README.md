@@ -1,4 +1,3 @@
-
 # Notes Sharing and Doubt Solving Platform
 
 Welcome to the Notes Sharing and Discussion Forum project! This is a web-based platform that provides users with the ability to share and discuss notes, as well as engage in conversations with fellow users. This project includes user account management functionalities, such as user registration, login, and password recovery, along with features like post creation, upvoting and downvoting mechanisms, discussion threads, and search functionality.
@@ -16,6 +15,11 @@ We hope that this project will be useful for individuals and groups who are inte
 Video Link : https://www.youtube.com/watch?v=hrPbWc7mh8o
 
 Website Link : https://harshsojitra007.github.io/CodeStudy/
+
+## Note: If you want to download and run the project on your local machine use below links to download the source code as this repository contains some bugs and might lead the project crash.
+
+#### [Frontend](https://github.com/harshsojitra007/CodeStudy)
+#### [Backend](https://github.com/harshsojitra007/Material-Sharing-and-Doubt-Solving-Backend)
 
 ## Installation Guide
 
